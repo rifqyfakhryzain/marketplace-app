@@ -29,47 +29,42 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
-    {
-        $exitinguser = User::where('email', $request->email)->first();
+public function store(Request $request): RedirectResponse
+{
+    $existingUser = User::where('email', $request->email)->first();
 
-        if ($exitinguser) {
-            if($exitinguser->google_id) {
-                // User sudah login pakai akun google
-                throw ValidationException::withMessages([
-                    'email' => 'Email ini sudah terdaftar melalui google. Silahkan login mennggunakan Google'
-                ]);
-
-            }
-
-            // User register Manual
-    
+    if ($existingUser) {
+        if ($existingUser->google_id) {
             throw ValidationException::withMessages([
-                'email' => 'Email ini sudah terdaftar silahkan login'
+                'email' => 'Email ini sudah terdaftar melalui Google. Silakan login menggunakan Google.',
             ]);
         }
 
-
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'unique:users,email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        throw ValidationException::withMessages([
+            'email' => 'Email ini sudah terdaftar. Silakan login.',
         ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-
-        // P
-        $user->assignRole('buyer');
-
-        event(new Registered($user));
-
-        Auth::login($user);
-
-        return redirect(route('dashboard', absolute: false));
     }
+
+    $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+    ]);
+
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'email_verified_at' => now(),
+    ]);
+
+    // ROLE DEFAULT
+    $user->assignRole('buyer');
+
+    // LOGIN LANGSUNG
+    Auth::login($user);
+
+    return redirect()->route('home');
+}
+
 }
