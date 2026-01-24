@@ -48,7 +48,7 @@ public function callback()
 
     Auth::login($user);
 
-    return redirect()->route('dashboard');
+    return redirect()->route('home');
 }
 
 
