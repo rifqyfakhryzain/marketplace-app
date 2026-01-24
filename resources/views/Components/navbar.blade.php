@@ -1,23 +1,17 @@
-@php
-    $isLoggedIn = session('isLoggedIn', false);
-    $userName = session('userName', 'null');
-@endphp
-
 <nav class="bg-blue-600">
 
     <!-- BARIS ATAS -->
     <div class="max-w-7xl mx-auto px-6 py-2 flex items-center gap-4">
 
         <!-- LOGO -->
-        <a href="/"class="w-[40px] h-[40px]
-                bg-white/20 rounded-full
-                flex items-center justify-center
-                text-white text-sm shrink-0
-                hover:bg-white/30 transition">
+        <a href="/"
+           class="w-[40px] h-[40px]
+                  bg-white/20 rounded-full
+                  flex items-center justify-center
+                  text-white text-sm shrink-0
+                  hover:bg-white/30 transition">
             Logo
         </a>
-
-
 
         <!-- LOKASI -->
         <div class="relative shrink-0">
@@ -38,8 +32,7 @@
                 placeholder="Cari barang..."
                 class="w-full bg-white text-gray-700
                        pl-5 pr-20 py-2.5 rounded-full text-sm
-                       border border-gray-200 focus:outline-none"
-            >
+                       border border-gray-200 focus:outline-none">
             <button
                 class="absolute right-2 top-1/2 -translate-y-1/2
                        px-4 py-1.5 rounded-full bg-blue-500
@@ -49,51 +42,58 @@
         </div>
 
         <!-- KANAN -->
-        @if ($isLoggedIn)
+        @auth
+            {{-- USER LOGIN --}}
+            <div class="flex items-center gap-3 shrink-0">
 
-            <!-- USER INFO (CLICKABLE) -->
-            <a href="/profile"
-            class="flex items-center gap-2
-                    hover:opacity-90
-                    transition">
+                <!-- USER -->
+                <a href="{{ route('profile.edit') }}"
+                   class="flex items-center gap-2 hover:opacity-90 transition">
 
-                <!-- NAMA -->
-                <span class="text-white text-sm font-medium">
-                    {{ $userName }}
-                </span>
+                    <span class="text-white text-sm font-medium">
+                        {{ Auth::user()->name }}
+                    </span>
 
-                <!-- AVATAR -->
-                <div class="w-9 h-9 rounded-full
-                            bg-white text-blue-600
-                            flex items-center justify-center
-                            text-sm font-bold shrink-0">
-                    {{ strtoupper(substr($userName,0,1)) }}
-                </div>
+                    <div class="w-9 h-9 rounded-full
+                                bg-white text-blue-600
+                                flex items-center justify-center
+                                text-sm font-bold">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </div>
+                </a>
 
-            </a>
+                <!-- PESANAN -->
+                <a href="/pesanan"
+                   class="bg-white text-blue-600
+                          px-4 py-2 rounded-full
+                          text-sm font-semibold">
+                    Pesanan
+                </a>
 
-            <!-- PESANAN -->
-            <a href="/pesanan"
-            class="bg-white text-blue-600
-                    px-4 py-2 rounded-full
-                    text-sm font-semibold shrink-0">
-                Pesanan
-            </a>
+                <!-- LOGOUT -->
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button
+                        type="submit"
+                        class="text-white text-sm hover:underline">
+                        Logout
+                    </button>
+                </form>
 
-        @else
-            <!-- GUEST -->
+            </div>
+        @endauth
+
+        @guest
+            {{-- GUEST --}}
             <button
                 type="button"
                 onclick="openAuthModal()"
                 class="bg-white text-blue-600
-                    px-4 py-2 rounded-full
-                    text-sm font-semibold">
+                       px-4 py-2 rounded-full
+                       text-sm font-semibold">
                 Masuk / Daftar
             </button>
-
-
-        @endif
-
+        @endguest
 
     </div>
 
