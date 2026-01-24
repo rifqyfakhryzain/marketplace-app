@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleAuthController;
-use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,10 +39,8 @@ Route::middleware('auth')->group(function () {
         ->name('profile.update');
 
     Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->name('profile.destroy');  
-    });
-
-    
+        ->name('profile.destroy');
+});
 
 /*
 |--------------------------------------------------------------------------
