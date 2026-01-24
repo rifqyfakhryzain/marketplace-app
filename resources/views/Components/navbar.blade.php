@@ -1,6 +1,6 @@
 @php
     $isLoggedIn = session('isLoggedIn', true);
-    $userName = session('userName', 'Hannessey');
+    $userName = session('userName', 'Lesley');
 @endphp
 
 <nav class="bg-blue-600">
