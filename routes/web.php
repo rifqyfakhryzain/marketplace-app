@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\BarangController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -59,5 +61,20 @@ Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])
 | DEFAULT AUTH (BREEZE)
 |--------------------------------------------------------------------------
 */
+
+/*
+|--------------------------------------------------------------------------
+| BACKEND - BARANG
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/barang', [BarangController::class, 'index']);
+Route::get('/barang/{id}', [BarangController::class, 'show']);
+Route::put('/barang/{id}', [BarangController::class, 'update']);
+Route::delete('/barang/{id}', [BarangController::class, 'destroy']);
+
+
+
+
 
 require __DIR__.'/auth.php';
