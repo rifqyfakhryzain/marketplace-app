@@ -1,10 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\BarangController;
 use App\Http\Controllers\EscrowController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleAuthController;
-use App\Http\Controllers\BarangController;
 
 
 /*
@@ -82,7 +83,7 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -111,4 +112,17 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/escrow/{id}/reject', [EscrowController::class, 'rejectEscrow'])
         ->name('escrow.reject');
+});
+
+/*
+|--------------------------------------------------------------------------
+| CHAT
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+    Route::post('/chat/start/{barang}', [ChatController::class, 'start']);
+    Route::get('/chats', [ChatController::class, 'index'])->name('chats.index');
+    Route::get('/chats/{chat}', [ChatController::class, 'show'])->name('chats.show');
+    Route::post('/chats/{chat}/messages', [ChatController::class, 'store']);
 });
