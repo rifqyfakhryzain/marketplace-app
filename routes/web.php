@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EscrowController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\BarangController;
@@ -56,11 +57,32 @@ Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])
     ->name('google.callback');
 
+
+/*
+|--------------------------------------------------------------------------
+| ESCROW (AUTHENTICATED)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+    Route::post('/escrow', [EscrowController::class, 'createEscrow'])
+        ->name('escrow.create');
+
+    Route::post('/escrow/{id}/approve', [EscrowController::class, 'approveEscrow'])
+        ->name('escrow.approve');
+
+    Route::post('/escrow/{id}/reject', [EscrowController::class, 'rejectEscrow'])
+        ->name('escrow.reject');
+});
+
+
 /*
 |--------------------------------------------------------------------------
 | DEFAULT AUTH (BREEZE)
 |--------------------------------------------------------------------------
 */
+
+require __DIR__.'/auth.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -74,7 +96,19 @@ Route::put('/barang/{id}', [BarangController::class, 'update']);
 Route::delete('/barang/{id}', [BarangController::class, 'destroy']);
 
 
+/*
+|--------------------------------------------------------------------------
+| ESCROW (AUTHENTICATED)
+|--------------------------------------------------------------------------
+*/
 
+Route::middleware('auth')->group(function () {
+    Route::post('/escrow', [EscrowController::class, 'createEscrow'])
+        ->name('escrow.create');
 
+    Route::post('/escrow/{id}/approve', [EscrowController::class, 'approveEscrow'])
+        ->name('escrow.approve');
 
-require __DIR__.'/auth.php';
+    Route::post('/escrow/{id}/reject', [EscrowController::class, 'rejectEscrow'])
+        ->name('escrow.reject');
+});
