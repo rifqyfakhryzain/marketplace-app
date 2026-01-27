@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\EscrowController;
+use App\Http\Controllers\SellerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 
@@ -15,7 +16,7 @@ use App\Http\Controllers\Auth\GoogleAuthController;
 
 Route::view('/', 'home')->name('home');
 
-Route::view('/produk/{id}', 'product-detail')->name('produk.detail');
+// Route::view('/produk/{id}', 'product-detail')->name('produk.detail');
 
 Route::view('/bantuan', 'pages.bantuan');
 Route::view('/bantuan/cara-berbelanja', 'pages.cara-berbelanja');
@@ -35,8 +36,10 @@ Route::view('/kebijakan-privasi', 'pages.kebijakan-privasi');
 Route::middleware('auth')->group(function () {
 
     Route::view('/pesanan', 'pesanan')->name('pesanan');
+        Route::get('/profile', [ProfileController::class, 'show'])
+        ->name('profile.show');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])
         ->name('profile.edit');
 
     Route::patch('/profile', [ProfileController::class, 'update'])
@@ -106,3 +109,24 @@ Route::delete('/barang/{id}', [BarangController::class, 'destroy']);
 */
 
 require __DIR__ . '/auth.php';
+
+// Seller
+Route::middleware('auth')->prefix('seller')->name('seller.')->group(function () {
+
+    Route::get('/products', [SellerController::class, 'products'])
+        ->name('products');
+
+    Route::get('/orders', [SellerController::class, 'orders'])
+        ->name('orders');
+
+    Route::get('/statistics', [SellerController::class, 'statistics'])
+        ->name('statistics');
+
+    Route::get('/products/create', [SellerController::class, 'createProduct'])
+        ->name('products.create');
+});
+Route::get('/barang', [BarangController::class, 'index']);
+
+Route::get('/produk/{id}', [BarangController::class, 'show'])
+    ->name('produk.detail');
+
