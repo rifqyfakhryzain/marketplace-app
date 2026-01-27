@@ -31,8 +31,7 @@
                         Produk Saya
                         </a>
 
-                        <a href="{{ route('seller.addproduct') }}"
-                        class="block
+<a href="{{ route('seller.products.create') }}">                        class="block
                         {{ request()->routeIs('seller.addproduct','seller.tambahproduk')}}">
                             Tambahkan Produk Baru
                         </a>
