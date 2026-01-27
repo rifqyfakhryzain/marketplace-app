@@ -7,6 +7,7 @@ use App\Http\Controllers\EscrowController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleAuthController;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -129,4 +130,3 @@ Route::get('/barang', [BarangController::class, 'index']);
 
 Route::get('/produk/{id}', [BarangController::class, 'show'])
     ->name('produk.detail');
-
