@@ -1,8 +1,3 @@
-@php
-    $isLoggedIn = session('isLoggedIn', true);
-    $userName = session('userName', 'Lesley');
-@endphp
-
 <nav class="bg-blue-600">
 
     <!-- BARIS ATAS -->
@@ -17,8 +12,6 @@
                   hover:bg-white/30 transition">
             Logo
         </a>
-
-
 
         <!-- LOKASI -->
         <div class="relative shrink-0">
@@ -51,35 +44,31 @@
 
         <!-- KANAN -->
         @auth
-            {{-- USER LOGIN --}}
             <div class="flex items-center gap-3 shrink-0">
 
                 <!-- USER -->
                 <a href="{{ route('profile.edit') }}"
                    class="flex items-center gap-2 hover:opacity-90 transition">
 
-                <!-- NAMA -->
-                <span class="text-white text-sm font-medium">
-                    {{ $userName }}
-                </span>
+                    <span class="text-white text-sm font-medium">
+                        {{ Auth::user()->name }}
+                    </span>
 
-                <!-- AVATAR -->
-                <div class="w-9 h-9 rounded-full
-                            bg-white text-blue-600
-                            flex items-center justify-center
-                            text-sm font-bold shrink-0">
-                    {{ strtoupper(substr($userName,0,1)) }}
-                </div>
+                    <div class="w-9 h-9 rounded-full
+                                bg-white text-blue-600
+                                flex items-center justify-center
+                                text-sm font-bold shrink-0">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </div>
+                </a>
 
-            </a>
-
-            <!-- PESANAN -->
-            <a href="/pesanan"
-            class="bg-white text-blue-600
-                    px-4 py-2 rounded-full
-                    text-sm font-semibold shrink-0">
-                Pesanan
-            </a>
+                <!-- PESANAN -->
+                <a href="/pesanan"
+                   class="bg-white text-blue-600
+                          px-4 py-2 rounded-full
+                          text-sm font-semibold shrink-0">
+                    Pesanan
+                </a>
 
                 <!-- LOGOUT -->
                 <form method="POST" action="{{ route('logout') }}">
@@ -95,19 +84,15 @@
         @endauth
 
         @guest
-            {{-- GUEST --}}
             <button
                 type="button"
                 onclick="openLogin()"
                 class="bg-white text-blue-600
-                    px-4 py-2 rounded-full
-                    text-sm font-semibold">
+                       px-4 py-2 rounded-full
+                       text-sm font-semibold">
                 Masuk / Daftar
             </button>
-
-
-        @endif
-
+        @endguest
 
     </div>
 

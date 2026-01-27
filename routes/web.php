@@ -7,7 +7,6 @@ use App\Http\Controllers\EscrowController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 
-
 /*
 |--------------------------------------------------------------------------
 | PUBLIC PAGES
@@ -17,7 +16,6 @@ use App\Http\Controllers\Auth\GoogleAuthController;
 Route::view('/', 'home')->name('home');
 
 Route::view('/produk/{id}', 'product-detail')->name('produk.detail');
-Route::view('/pesanan', 'pesanan')->middleware('auth')->name('pesanan');
 
 Route::view('/bantuan', 'pages.bantuan');
 Route::view('/bantuan/cara-berbelanja', 'pages.cara-berbelanja');
@@ -35,6 +33,8 @@ Route::view('/kebijakan-privasi', 'pages.kebijakan-privasi');
 */
 
 Route::middleware('auth')->group(function () {
+
+    Route::view('/pesanan', 'pesanan')->name('pesanan');
 
     Route::get('/profile', [ProfileController::class, 'edit'])
         ->name('profile.edit');
@@ -58,7 +58,6 @@ Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])
     ->name('google.callback');
 
-
 /*
 |--------------------------------------------------------------------------
 | ESCROW (AUTHENTICATED)
@@ -76,14 +75,18 @@ Route::middleware('auth')->group(function () {
         ->name('escrow.reject');
 });
 
-
 /*
 |--------------------------------------------------------------------------
-| DEFAULT AUTH (BREEZE)
+| CHAT (AUTHENTICATED)
 |--------------------------------------------------------------------------
 */
 
-require __DIR__ . '/auth.php';
+Route::middleware('auth')->group(function () {
+    Route::post('/chat/start/{barang}', [ChatController::class, 'start']);
+    Route::get('/chats', [ChatController::class, 'index'])->name('chats.index');
+    Route::get('/chats/{chat}', [ChatController::class, 'show'])->name('chats.show');
+    Route::post('/chats/{chat}/messages', [ChatController::class, 'store']);
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -96,33 +99,10 @@ Route::get('/barang/{id}', [BarangController::class, 'show']);
 Route::put('/barang/{id}', [BarangController::class, 'update']);
 Route::delete('/barang/{id}', [BarangController::class, 'destroy']);
 
-
 /*
 |--------------------------------------------------------------------------
-| ESCROW (AUTHENTICATED)
+| DEFAULT AUTH (BREEZE)
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->group(function () {
-    Route::post('/escrow', [EscrowController::class, 'createEscrow'])
-        ->name('escrow.create');
-
-    Route::post('/escrow/{id}/approve', [EscrowController::class, 'approveEscrow'])
-        ->name('escrow.approve');
-
-    Route::post('/escrow/{id}/reject', [EscrowController::class, 'rejectEscrow'])
-        ->name('escrow.reject');
-});
-
-/*
-|--------------------------------------------------------------------------
-| CHAT
-|--------------------------------------------------------------------------
-*/
-
-Route::middleware('auth')->group(function () {
-    Route::post('/chat/start/{barang}', [ChatController::class, 'start']);
-    Route::get('/chats', [ChatController::class, 'index'])->name('chats.index');
-    Route::get('/chats/{chat}', [ChatController::class, 'show'])->name('chats.show');
-    Route::post('/chats/{chat}/messages', [ChatController::class, 'store']);
-});
+require __DIR__ . '/auth.php';

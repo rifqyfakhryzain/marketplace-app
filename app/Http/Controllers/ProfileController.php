@@ -34,21 +34,24 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-public function update(ProfileUpdateRequest $request)
-{
-    $user = $request->user();
+    public function update(ProfileUpdateRequest $request): RedirectResponse
+    {
+        $user = $request->user();
 
-    $user->update([
-        'name'    => $request->name,
-        'bio'     => $request->bio,
-        'phone'   => $request->phone,
-        'address' => $request->address,
-    ]);
+        // isi semua field tervalidasi
+        $user->fill($request->validated());
 
-    return redirect()
-        ->route('profile.show')
-        ->with('success', 'Profile berhasil diperbarui');
-}
+        // reset verifikasi kalau email berubah
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+
+        // setelah update, balik ke halaman PROFILE (bukan edit)
+        return Redirect::route('profile.show')
+            ->with('success', 'Profil berhasil diperbarui');
+    }
 
     /**
      * Delete the user's account.
@@ -62,6 +65,7 @@ public function update(ProfileUpdateRequest $request)
         $user = $request->user();
 
         Auth::logout();
+
         $user->delete();
 
         $request->session()->invalidate();
@@ -70,4 +74,3 @@ public function update(ProfileUpdateRequest $request)
         return Redirect::to('/');
     }
 }
-
