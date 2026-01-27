@@ -90,7 +90,7 @@
                     Tentang Pengguna
                 </h3>
                 <p class="text-gray-700 leading-relaxed bg-gray-50 rounded-lg p-4">
-                    {{ $user->bio ?? 'Belum ada deskripsi.' }}
+                    {{ $user->deskripsi ?? 'Belum ada deskripsi.' }}
                 </p>
             </div>
 
@@ -103,13 +103,13 @@
 
                 <div class="bg-gray-50 rounded-lg p-4">
                     <p class="text-xs text-gray-500 mb-1">📱 No. Telepon</p>
-                    <p class="text-gray-900 font-medium">{{ $user->phone ?? '-' }}</p>
+                    <p class="text-gray-900 font-medium">{{ $user->no_telepon ?? '-' }}</p>
                 </div>
 
                 <div class="md:col-span-2 bg-gray-50 rounded-lg p-4">
                     <p class="text-xs text-gray-500 mb-1">📍 Alamat</p>
                     <p class="text-gray-900 font-medium">
-                        {{ $user->address ?? 'Alamat belum diisi' }}
+                        {{ $user->alamat ?? 'Alamat belum diisi' }}
                     </p>
                 </div>
             </div>
