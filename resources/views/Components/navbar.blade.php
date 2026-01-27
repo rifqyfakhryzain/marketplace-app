@@ -13,6 +13,16 @@
             Logo
         </a>
 
+        <!-- MODE BADGE -->
+        @auth
+            <span class="text-xs px-3 py-1 rounded-full
+                {{ session('mode') === 'seller'
+                    ? 'bg-yellow-400 text-blue-900'
+                    : 'bg-white/20 text-white' }}">
+                {{ session('mode') === 'seller' ? 'Mode Seller' : 'Mode Buyer' }}
+            </span>
+        @endauth
+
         <!-- LOKASI -->
         <div class="relative shrink-0">
             <select class="appearance-none bg-white text-gray-700
@@ -46,6 +56,25 @@
         @auth
             <div class="flex items-center gap-3 shrink-0">
 
+                <!-- SWITCH MODE -->
+                @if(auth()->user()->hasRole('seller'))
+                    @if(session('mode') === 'buyer')
+                        <a href="{{ route('switch.seller') }}"
+                           class="bg-yellow-400 text-blue-900
+                                  px-4 py-2 rounded-full
+                                  text-sm font-semibold">
+                            Pusat Penjualan
+                        </a>
+                    @else
+                        <a href="{{ route('switch.buyer') }}"
+                           class="bg-white text-blue-600
+                                  px-4 py-2 rounded-full
+                                  text-sm font-semibold">
+                            Kembali ke Buyer
+                        </a>
+                    @endif
+                @endif
+
                 <!-- USER -->
                 <a href="{{ route('profile.show') }}"
                    class="flex items-center gap-2 hover:opacity-90 transition">
@@ -61,15 +90,6 @@
                         {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                     </div>
                 </a>
-
-                <!-- PESANAN -->
-                <a href="/pesanan"
-                   class="bg-white text-blue-600
-                          px-4 py-2 rounded-full
-                          text-sm font-semibold shrink-0">
-                    Pesanan
-                </a>
-
                 <!-- LOGOUT -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
