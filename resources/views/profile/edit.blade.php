@@ -100,18 +100,18 @@
                     @enderror
                 </div>
 
-                {{-- BIO --}}
+                {{-- DESKRIPSI --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">
                         Deskripsi
                     </label>
                     <textarea
-                        name="bio"
+                        name="deskripsi"
                         rows="4"
                         class="w-full rounded-md border-gray-300
                                focus:border-indigo-500 focus:ring-indigo-500"
-                    >{{ old('bio', $user->bio) }}</textarea>
-                    @error('bio')
+                    >{{ old('deskripsi', $user->deskripsi) }}</textarea>
+                    @error('deskripsi')
                         <p class="text-sm text-red-600 mt-1">
                             {{ $message }}
                         </p>
@@ -125,30 +125,30 @@
                     </label>
                     <input
                         type="text"
-                        name="phone"
-                        value="{{ old('phone', $user->phone) }}"
+                        name="no_telepon"
+                        value="{{ old('no_telepon', $user->no_telepon) }}"
                         class="w-full rounded-md border-gray-300
                                focus:border-indigo-500 focus:ring-indigo-500"
                     >
-                    @error('phone')
+                    @error('no_telepon')
                         <p class="text-sm text-red-600 mt-1">
                             {{ $message }}
                         </p>
                     @enderror
                 </div>
 
-                {{-- ADDRESS --}}
+                {{-- ALAMAT --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">
                         Alamat
                     </label>
                     <textarea
-                        name="address"
+                        name="alamat"
                         rows="2"
                         class="w-full rounded-md border-gray-300
                                focus:border-indigo-500 focus:ring-indigo-500"
-                    >{{ old('address', $user->address) }}</textarea>
-                    @error('address')
+                    >{{ old('alamat', $user->alamat) }}</textarea>
+                    @error('alamat')
                         <p class="text-sm text-red-600 mt-1">
                             {{ $message }}
                         </p>
