@@ -47,7 +47,7 @@
             <div class="flex items-center gap-3 shrink-0">
 
                 <!-- USER -->
-                <a href="{{ route('profile.edit') }}"
+                <a href="{{ route('profile.show') }}"
                    class="flex items-center gap-2 hover:opacity-90 transition">
 
                     <span class="text-white text-sm font-medium">
