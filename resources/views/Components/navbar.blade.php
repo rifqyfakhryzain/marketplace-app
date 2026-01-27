@@ -9,11 +9,12 @@
     <div class="max-w-7xl mx-auto px-6 py-2 flex items-center gap-4">
 
         <!-- LOGO -->
-        <a href="/"class="w-[40px] h-[40px]
-                bg-white/20 rounded-full
-                flex items-center justify-center
-                text-white text-sm shrink-0
-                hover:bg-white/30 transition">
+        <a href="/"
+           class="w-[40px] h-[40px]
+                  bg-white/20 rounded-full
+                  flex items-center justify-center
+                  text-white text-sm shrink-0
+                  hover:bg-white/30 transition">
             Logo
         </a>
 
@@ -49,13 +50,13 @@
         </div>
 
         <!-- KANAN -->
-        @if ($isLoggedIn)
+        @auth
+            {{-- USER LOGIN --}}
+            <div class="flex items-center gap-3 shrink-0">
 
-            <!-- USER INFO (CLICKABLE) -->
-            <a href="/profile"
-            class="flex items-center gap-2
-                    hover:opacity-90
-                    transition">
+                <!-- USER -->
+                <a href="{{ route('profile.edit') }}"
+                   class="flex items-center gap-2 hover:opacity-90 transition">
 
                 <!-- NAMA -->
                 <span class="text-white text-sm font-medium">
@@ -80,8 +81,21 @@
                 Pesanan
             </a>
 
-        @else
-            <!-- GUEST -->
+                <!-- LOGOUT -->
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button
+                        type="submit"
+                        class="text-white text-sm hover:underline">
+                        Logout
+                    </button>
+                </form>
+
+            </div>
+        @endauth
+
+        @guest
+            {{-- GUEST --}}
             <button
                 type="button"
                 onclick="openLogin()"
