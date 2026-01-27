@@ -8,15 +8,53 @@ use App\Models\Barang;
 
 class BarangController extends Controller
 {
-    public function index()
-    {
-        return Barang::all();
-    }
+public function index()
+{
+    $barangs = Barang::latest()->get();
+    return view('home', compact('barangs'));
+}
 
-    public function show($id)
-    {
-        return Barang::find($id);
-    }
+
+public function show($id)
+{
+    $barang = Barang::with('penjual')->findOrFail($id);
+
+    $product = [
+        'id' => $barang->id,
+        'name' => $barang->nama_barang,
+        'description' => $barang->deskripsi,
+        'price' => $barang->harga,
+        'location' => 'Indonesia', // atau dari DB nanti
+
+        // sementara dummy / nanti dari relasi gambar
+        'images' => [
+            '/images/dummy1.jpg',
+            '/images/dummy2.jpg',
+        ],
+
+        'user' => [
+            'id' => $barang->penjual?->id,
+            'name' => $barang->penjual?->name,
+            'avatar' => $barang->penjual?->avatar ?? '/images/default-avatar.png',
+        ],
+    ];
+
+    // dummy ratings (karena FE expect ini)
+    $ratings = [
+        [
+            'initial' => 'AR',
+            'star' => 5,
+            'product' => $product['name'],
+            'comment' => 'Barang sesuai deskripsi, pengiriman cepat',
+        ],
+    ];
+
+    return view('produk.show', compact('product', 'ratings'));
+}
+
+
+
+
 
     public function update(Request $request, $id)
     {
