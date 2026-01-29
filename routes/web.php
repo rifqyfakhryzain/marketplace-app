@@ -37,7 +37,7 @@ Route::view('/kebijakan-privasi', 'pages.kebijakan-privasi');
 Route::middleware('auth')->group(function () {
 
     Route::view('/pesanan', 'pesanan')->name('pesanan');
-        Route::get('/profile', [ProfileController::class, 'show'])
+    Route::get('/profile', [ProfileController::class, 'show'])
         ->name('profile.show');
 
     Route::get('/profile/edit', [ProfileController::class, 'edit'])
@@ -111,22 +111,32 @@ Route::delete('/barang/{id}', [BarangController::class, 'destroy']);
 
 require __DIR__ . '/auth.php';
 
-// Seller
-Route::middleware('auth')->prefix('seller')->name('seller.')->group(function () {
+// AKTIFKAN TOKO (BUYER -> SELLER)
+Route::post('/become-seller', [SellerController::class, 'activate'])
+    ->middleware('auth')
+    ->name('seller.activate');
 
-    Route::get('/products', [SellerController::class, 'products'])
-        ->name('products');
+// SELLER DASHBOARD & FITUR
+Route::middleware(['auth', 'seller'])
+    ->prefix('seller')
+    ->name('seller.')
+    ->group(function () {
 
-    Route::get('/orders', [SellerController::class, 'orders'])
-        ->name('orders');
+        // Produk seller
+        Route::get('/products', [SellerController::class, 'products'])
+            ->name('products');
 
-    Route::get('/statistics', [SellerController::class, 'statistics'])
-        ->name('statistics');
+        Route::get('/products/create', [SellerController::class, 'createProduct'])
+            ->name('products.create');
 
-    Route::get('/products/create', [SellerController::class, 'createProduct'])
-        ->name('products.create');
-});
-Route::get('/barang', [BarangController::class, 'index']);
+        Route::post('/products', [SellerController::class, 'storeProduct'])
+            ->name('products.store');
 
-Route::get('/produk/{id}', [BarangController::class, 'show'])
-    ->name('produk.detail');
+        // Pesanan masuk
+        Route::get('/orders', [SellerController::class, 'orders'])
+            ->name('orders');
+
+        // Statistik penjualan
+        Route::get('/statistics', [SellerController::class, 'statistics'])
+            ->name('statistics');
+    });
