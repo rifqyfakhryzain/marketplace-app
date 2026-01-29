@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Barang;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class BarangController extends Controller
 {
@@ -56,18 +57,29 @@ public function show($id)
 
 
 
-    public function update(Request $request, $id)
-    {
-        $barang = \App\Models\Barang::find($id);
+public function update(Request $request, $id)
+{
+    $barang = Barang::findOrFail($id);
 
-        if (!$barang) {
-            return response()->json(['message' => 'Barang tidak ditemukan'], 404);
-        }
-
-        $barang->update($request->all());
-
-        return $barang;
+    // CEGAH EDIT BARANG ORANG LAIN
+if ($barang->user_id !== Auth::id()) {
+        abort(403, 'Tidak diizinkan');
     }
+
+    $validated = $request->validate([
+        'nama_barang' => 'required|string|max:255',
+        'deskripsi'   => 'nullable|string',
+        'harga'       => 'required|integer|min:0',
+        'kategori_id' => 'required|exists:kategori,id',
+        'status'      => 'required|string',
+    ]);
+
+    $barang->update($validated);
+
+    return redirect()->route('seller.products')
+        ->with('success', 'Produk berhasil diperbarui');
+}
+
 
     public function destroy($id)
     {
