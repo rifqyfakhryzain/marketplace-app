@@ -92,16 +92,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/chats/{chat}/messages', [ChatController::class, 'store']);
 });
 
-/*
-|--------------------------------------------------------------------------
-| BACKEND - BARANG
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/barang', [BarangController::class, 'index']);
-Route::get('/barang/{id}', [BarangController::class, 'show']);
-Route::put('/barang/{id}', [BarangController::class, 'update']);
-Route::delete('/barang/{id}', [BarangController::class, 'destroy']);
 
 /*
 |--------------------------------------------------------------------------
@@ -116,21 +106,36 @@ Route::post('/become-seller', [SellerController::class, 'activate'])
     ->middleware('auth')
     ->name('seller.activate');
 
-// SELLER DASHBOARD & FITUR
 Route::middleware(['auth', 'seller'])
     ->prefix('seller')
     ->name('seller.')
     ->group(function () {
 
-        // Produk seller
-        Route::get('/products', [SellerController::class, 'products'])
+        // ✅ PRODUK SELLER (KE BarangController)
+        Route::get('/products', [BarangController::class, 'sellerIndex'])
             ->name('products');
 
-        Route::get('/products/create', [SellerController::class, 'createProduct'])
+        Route::get('/products/create', [BarangController::class, 'create'])
             ->name('products.create');
 
-        Route::post('/products', [SellerController::class, 'storeProduct'])
+        Route::post('/products', [BarangController::class, 'store'])
             ->name('products.store');
+
+
+        // Lihat
+        Route::get('/products/{barang}', [BarangController::class, 'sellerShow'])
+            ->name('products.show');
+        // 🔹 EDIT
+        Route::get('/products/{id}/edit', [BarangController::class, 'edit'])
+            ->name('products.edit');
+
+        // 🔹 UPDATE
+        Route::put('/products/{id}', [BarangController::class, 'update'])
+            ->name('products.update');
+
+        // 🔹 DELETE
+        Route::delete('/products/{id}', [BarangController::class, 'destroy'])
+            ->name('products.destroy');
 
         // Pesanan masuk
         Route::get('/orders', [SellerController::class, 'orders'])
