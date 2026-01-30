@@ -13,15 +13,22 @@ return new class extends Migration
     {
         Schema::create('barang', function (Blueprint $table) {
             $table->id();
-            
+
             $table->string('nama_barang');
             $table->text('deskripsi');
             $table->integer('harga');
+            $table->integer('stok')->default(0);
 
-            $table->foreignId('kategori_id');
-            $table->foreignId('user_id'); // penjual
 
-            $table->string('status')->default('tersedia');
+            $table->foreignId('kategori_id')
+                ->constrained('kategori')
+                ->cascadeOnDelete();
+
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete(); // penjual
+
+            $table->enum('status', ['tersedia', 'nonaktif'])->default('tersedia');
 
             $table->timestamps();
         });
