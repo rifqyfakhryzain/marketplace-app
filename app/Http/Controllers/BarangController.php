@@ -3,97 +3,129 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use App\Models\Kategori;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class BarangController extends Controller
 {
-public function index()
-{
-    $barangs = Barang::latest()->get();
-    return view('home', compact('barangs'));
-}
+    // BUYER - HOME
+    public function index()
+    {
+        $barangs = Barang::with(['kategori', 'penjual'])
+            ->where('status', 'tersedia')
+            ->latest()
+            ->get();
 
-
-public function show($id)
-{
-    $barang = Barang::with('penjual')->findOrFail($id);
-
-    $product = [
-        'id' => $barang->id,
-        'name' => $barang->nama_barang,
-        'description' => $barang->deskripsi,
-        'price' => $barang->harga,
-        'location' => 'Indonesia', // atau dari DB nanti
-
-        // sementara dummy / nanti dari relasi gambar
-        'images' => [
-            '/images/dummy1.jpg',
-            '/images/dummy2.jpg',
-        ],
-
-        'user' => [
-            'id' => $barang->penjual?->id,
-            'name' => $barang->penjual?->name,
-            'avatar' => $barang->penjual?->avatar ?? '/images/default-avatar.png',
-        ],
-    ];
-
-    // dummy ratings (karena FE expect ini)
-    $ratings = [
-        [
-            'initial' => 'AR',
-            'star' => 5,
-            'product' => $product['name'],
-            'comment' => 'Barang sesuai deskripsi, pengiriman cepat',
-        ],
-    ];
-
-    return view('produk.show', compact('product', 'ratings'));
-}
-
-
-
-
-
-public function update(Request $request, $id)
-{
-    $barang = Barang::findOrFail($id);
-
-    // CEGAH EDIT BARANG ORANG LAIN
-if ($barang->user_id !== Auth::id()) {
-        abort(403, 'Tidak diizinkan');
+        return view('home', compact('barangs'));
     }
 
-    $validated = $request->validate([
-        'nama_barang' => 'required|string|max:255',
-        'deskripsi'   => 'nullable|string',
-        'harga'       => 'required|integer|min:0',
-        'kategori_id' => 'required|exists:kategori,id',
-        'status'      => 'required|string',
-    ]);
+    // BUYER - DETAIL
+    public function show($id)
+    {
+        $barang = Barang::with(['penjual', 'kategori'])->findOrFail($id);
+        return view('produk.show', compact('barang'));
+    }
 
-    $barang->update($validated);
+    // SELLER - PRODUK SAYA
+    public function sellerIndex()
+    {
+        $barangs = Barang::with('kategori')
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->get();
 
-    return redirect()->route('seller.products')
-        ->with('success', 'Produk berhasil diperbarui');
-}
+        return view('seller.barang.index', compact('barangs'));
+    }
+
+    // SELLER - FORM TAMBAH
+    public function create()
+    {
+        $kategori = Kategori::all();
+        return view('seller.barang.create', compact('kategori'));
+    }
+
+    // SELLER - SIMPAN
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nama_barang' => 'required|string|max:255',
+            'deskripsi'   => 'required|string',
+            'harga'       => 'required|integer|min:0',
+            'stok'        => 'required|integer|min:0',
+            'kategori_id' => 'required|exists:kategori,id',
+            'status'      => 'required|in:tersedia,nonaktif',
+        ]);
+
+        $validated['user_id'] = Auth::id();
+
+        Barang::create($validated);
+
+        return redirect()
+            ->route('seller.products')
+            ->with('success', 'Produk berhasil ditambahkan');
+    }
+
+    // SELLER - UPDATE
+    public function update(Request $request, $id)
+    {
+        $barang = Barang::findOrFail($id);
+
+        if ($barang->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'nama_barang' => 'required|string|max:255',
+            'deskripsi'   => 'required|string',
+            'harga'       => 'required|integer|min:0',
+            'stok'        => 'required|integer|min:0',
+            'kategori_id' => 'required|exists:kategori,id',
+            'status'      => 'required|in:tersedia,nonaktif',
+        ]);
+
+        $barang->update($validated);
+
+        return redirect()
+            ->route('seller.products')
+            ->with('success', 'Produk berhasil diperbarui');
+    }
+
+    public function edit($id)
+    {
+        $barang = Barang::where('user_id', Auth::id())
+            ->findOrFail($id);
+
+        $kategori = Kategori::all();
+
+        return view('seller.barang.edit', compact('barang', 'kategori'));
+    }
 
 
+    // SELLER - HAPUS
     public function destroy($id)
     {
-        $barang = \App\Models\Barang::find($id);
+        $barang = Barang::findOrFail($id);
 
-        if (!$barang) {
-            return response()->json(['message' => 'Barang tidak ditemukan'], 404);
+        if ($barang->user_id !== Auth::id()) {
+            abort(403);
         }
 
         $barang->delete();
 
-        return response()->json(['message' => 'Barang berhasil dihapus']);
+        return redirect()->back()
+            ->with('success', 'Produk berhasil dihapus');
     }
 
+    public function sellerShow(Barang $barang)
+    {
+        // CEGAH AKSES PRODUK ORANG LAIN
+        if ($barang->user_id !== Auth::id()) {
+            abort(403);
+        }
 
+        $barang->load('kategori');
 
+        return view('seller.barang.show', compact('barang'));
+    }
 }
