@@ -18,40 +18,9 @@
     <div class="overflow-x-auto">
         <div class="flex gap-4 pb-2">
 
-            @php
-            $products = [
-                [
-                    'id' => 1,
-                    'name' => 'Kompor Listrik dan Oven',
-                    'price' => 6000000,
-                    'location' => 'Kota Bandung',
-                    'image' => 'images/produk.jpg',
-                ],
-                [
-                    'id' => 2,
-                    'name' => 'Kamera Mirrorless Sony',
-                    'price' => 4500000,
-                    'location' => 'Jakarta Selatan',
-                    'image' => 'images/produk.jpg',
-                ],
-                [
-                    'id' => 3,
-                    'name' => 'Sepeda Lipat Polygon',
-                    'price' => 3200000,
-                    'location' => 'Surabaya',
-                    'image' => 'images/produk.jpg',
-                ],
-            ];
-            @endphp
-
-
-
             @foreach ($products as $product)
                 @include('components.product-card', ['product' => $product])
             @endforeach
-
-
-
         </div>
     </div>
 
