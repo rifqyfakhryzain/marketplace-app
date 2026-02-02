@@ -1,13 +1,15 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\EscrowController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublicBarangController;
 use App\Http\Controllers\Auth\GoogleAuthController;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +17,8 @@ use Illuminate\Support\Facades\Auth;
 |--------------------------------------------------------------------------
 */
 
-Route::view('/', 'home')->name('home');
+// Route::view('/', 'home')->name('home');
+Route::get('/',[HomeController::class, 'index'])->name('home');
 
 // Route::view('/produk/{id}', 'product-detail')->name('produk.detail');
 
@@ -28,6 +31,12 @@ Route::view('/tentang', 'pages.tentang');
 Route::view('/syarat-ketentuan', 'pages.syarat-ketentuan');
 Route::view('/kebijakan-privasi', 'pages.kebijakan-privasi');
 
+// Public Product
+Route::get('/products', [PublicBarangController::class, 'index'])
+    ->name('products.index');
+
+Route::get('/products/{barang}', [PublicBarangController::class, 'show'])
+    ->name('products.show');
 /*
 |--------------------------------------------------------------------------
 | AUTHENTICATED USER
@@ -145,3 +154,41 @@ Route::middleware(['auth', 'seller'])
         Route::get('/statistics', [SellerController::class, 'statistics'])
             ->name('statistics');
     });
+
+Route::get('/seller/orders/{order}', function ($order) {
+    return view('profile.seller.detailPesanan');
+})->name('seller.orders.detail');
+
+Route::middleware(['auth'])->group(function () {
+
+    // LIST PESANAN BUYER
+    Route::get('/profile/buyer/pesanan', function () {
+        return view('profile.buyer.pesanan');
+    })->name('buyer.orders');
+
+    // DETAIL PESANAN BUYER
+    Route::get('/profile/buyer/pesanan/{id}', function ($id) {
+        return view('profile.buyer.detailPesanan', compact('id'));
+    })->name('buyer.orders.detail');
+
+    // ✅ BAYAR SEKARANG (ESCROW)
+    Route::get('/profile/buyer/pesanan/{id}/bayar', function ($id) {
+        return view('profile.buyer.Bayar', compact('id'));
+    })->name('buyer.orders.pay');
+
+});
+
+
+Route::middleware(['auth'])->group(function () {
+
+    // LIST PESANAN SELLER
+    Route::get('/profile/seller/pesanan', function () {
+        return view('profile.seller.pesanan');
+    })->name('seller.orders');
+
+    // DETAIL PESANAN SELLER
+    Route::get('/profile/seller/pesanan/{id}', function ($id) {
+        return view('profile.seller.detailPesanan', compact('id'));
+    })->name('seller.orders.detail');
+
+});
