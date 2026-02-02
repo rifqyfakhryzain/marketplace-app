@@ -128,7 +128,8 @@
                                                 <button type="submit" class="text-red-600 hover:underline">
                                                     Hapus
                                                 </button>
-                                                </for </tr>
+                                                </form>
+                                             </tr>
                                             @empty
                                 <tr>
                                     <td colspan="5" class="px-3 py-6 text-center text-gray-500">

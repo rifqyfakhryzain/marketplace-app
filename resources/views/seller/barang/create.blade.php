@@ -65,8 +65,10 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('seller.products.store') }}" class="space-y-6">
-                    @csrf
+<form method="POST"
+      action="{{ route('seller.products.store') }}"
+      enctype="multipart/form-data"
+      class="space-y-6">                    @csrf
 
                     {{-- Nama Produk --}}
                     <div>
@@ -123,6 +125,49 @@
                             Tulis deskripsi yang jelas agar pembeli percaya.
                         </p>
                     </div>
+
+{{-- GAMBAR PRODUK --}}
+<div>
+    <label class="block text-sm font-medium mb-1">
+        Gambar Produk
+    </label>
+
+    <div class="border-2 border-dashed rounded-lg p-4">
+        <input
+            type="file"
+            name="gambar[]"
+            accept="image/*"
+            multiple
+            class="hidden"
+            id="gambarInput"
+        >
+
+        <label for="gambarInput"
+               class="cursor-pointer flex flex-col items-center gap-2 text-center">
+            <div class="grid grid-cols-4 gap-2">
+                <div class="w-20 h-20 bg-gray-100 rounded flex items-center justify-center text-gray-400">
+                    +
+                </div>
+                <div class="w-20 h-20 bg-gray-100 rounded"></div>
+                <div class="w-20 h-20 bg-gray-100 rounded"></div>
+                <div class="w-20 h-20 bg-gray-100 rounded"></div>
+            </div>
+
+            <span class="text-sm text-gray-600 mt-2">
+                Klik untuk upload beberapa gambar
+            </span>
+            <span class="text-xs text-gray-400">
+                Maks 5 gambar • JPG / PNG
+            </span>
+        </label>
+    </div>
+
+    @error('gambar')
+        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+    @enderror
+</div>
+
+
 
                     {{-- STATUS --}}
                     <div>

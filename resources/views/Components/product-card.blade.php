@@ -1,5 +1,5 @@
 @isset($product)
-<a href="{{ url('/produk/' . $product['id']) }}"
+<a href="{{ route('products.show', $product['id']) }}"
    class="block w-[200px] shrink-0">
 
     <div class="bg-white rounded-xl shadow p-3

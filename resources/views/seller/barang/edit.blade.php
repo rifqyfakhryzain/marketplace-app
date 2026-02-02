@@ -66,9 +66,13 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('seller.products.update', $barang->id) }}" class="space-y-6">
-                    @csrf
-                    @method('PUT')
+<form method="POST"
+      action="{{ route('seller.products.update', $barang->id) }}"
+      enctype="multipart/form-data"
+      class="space-y-6">
+    @csrf
+    @method('PUT')
+
 
                     {{-- Nama Produk --}}
                     <div>
@@ -120,6 +124,68 @@
                         </label>
                         <textarea name="deskripsi" rows="5" class="w-full border rounded px-3 py-2 focus:outline-none" required>{{ old('deskripsi', $barang->deskripsi) }}</textarea>
                     </div>
+
+                    {{-- GAMBAR PRODUK --}}
+<div>
+    <label class="block text-sm font-medium mb-1">
+        Gambar Produk
+    </label>
+
+    {{-- GAMBAR LAMA --}}
+    <div class="grid grid-cols-4 gap-3 mb-3">
+        @forelse ($barang->gambars ?? [] as $gambar)
+            <div class="relative">
+                <img src="{{ asset('storage/' . $gambar->path) }}"
+                     class="w-24 h-24 object-cover rounded border">
+
+                {{-- nanti bisa tambah tombol hapus --}}
+                <span class="absolute top-1 right-1 bg-black/60 text-white text-xs px-1 rounded">
+                    Lama
+                </span>
+            </div>
+        @empty
+            <p class="text-sm text-gray-400 col-span-4">
+                Belum ada gambar
+            </p>
+        @endforelse
+    </div>
+
+    {{-- UPLOAD GAMBAR BARU --}}
+    <div class="border-2 border-dashed rounded-lg p-4">
+        <input
+            type="file"
+            name="gambar[]"
+            accept="image/*"
+            multiple
+            class="hidden"
+            id="gambarInput"
+        >
+
+        <label for="gambarInput"
+               class="cursor-pointer flex flex-col items-center gap-2 text-center">
+            <div class="grid grid-cols-4 gap-2">
+                <div class="w-20 h-20 bg-gray-100 rounded flex items-center justify-center text-gray-400">
+                    +
+                </div>
+                <div class="w-20 h-20 bg-gray-100 rounded"></div>
+                <div class="w-20 h-20 bg-gray-100 rounded"></div>
+                <div class="w-20 h-20 bg-gray-100 rounded"></div>
+            </div>
+
+            <span class="text-sm text-gray-600 mt-2">
+                Tambah / ganti gambar produk
+            </span>
+            <span class="text-xs text-gray-400">
+                Bisa pilih banyak gambar sekaligus
+            </span>
+        </label>
+    </div>
+
+    <p class="text-xs text-gray-500 mt-1">
+        Kosongkan jika tidak ingin mengganti gambar
+    </p>
+</div>
+
 
                     {{-- Status --}}
                     <div>
