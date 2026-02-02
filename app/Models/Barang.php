@@ -33,4 +33,10 @@ class Barang extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function scopePublic($query)
+{
+    return $query->where('status', 'tersedia');
+}
+
 }
