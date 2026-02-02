@@ -47,15 +47,12 @@
             @auth
                 <div class="flex items-center gap-3 shrink-0">
 
-                    @role('seller')
-                        <a href="{{ route('seller.products') }}"
-                            class="bg-yellow-400 text-blue-900
-                px-4 py-2 rounded-full
-                text-sm font-semibold">
-                            Pusat Penjualan
+                        <a href="{{ route('buyer.orders') }}"
+                            class="bg-white text-blue-900
+                                px-4 py-2 rounded-full
+                                text-sm font-semibold">
+                            Pesanan
                         </a>
-                    @endrole
-
 
                     <!-- USER -->
                     <a href="{{ route('profile.show') }}" class="flex items-center gap-2 hover:opacity-90 transition">
@@ -72,14 +69,6 @@
                             {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                         </div>
                     </a>
-                    <!-- LOGOUT -->
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="text-white text-sm hover:underline">
-                            Logout
-                        </button>
-                    </form>
-
                 </div>
             @endauth
 

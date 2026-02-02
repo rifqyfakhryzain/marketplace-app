@@ -1,137 +1,96 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="max-w-7xl mx-auto p-6">
+@php
+    $orders = [
+        (object)[
+            'id' => 1,
+            'code' => 'ORD-001',
+            'date' => '25 Jan 2026',
+            'product' => 'iPhone XR',
+            'qty' => 1,
+            'payment_method' => 'COD – Bayar di tempat',
+            'shipping' => (object)[
+                'name' => 'Hennessy',
+                'phone' => '081234567890',
+                'address' => 'Jakarta Selatan',
+            ],
+            'price' => 25000,
+            'status' => 'Menunggu Pembayaran',
+            'status_color' => 'bg-yellow-100 text-yellow-700',
+        ],
+    ];
+@endphp
 
-        <div class="grid grid-cols-12 gap-6">
+<div class="max-w-5xl mx-auto p-6">
 
-            {{-- KIRI --}}
-            <div class="col-span-3">
-                <div class="space-y-6 text-sm">
+    <h1 class="text-2xl font-semibold mb-6">
+        Pesanan Masuk
+    </h1>
 
-                    <div>
-                        <p class="font-semibold">Pesanan</p>
-                        <div class="ml-3 mt-2">
-                            <a href="{{ route('seller.orders') }}"
-                                class="block
-           {{ request()->routeIs('seller.orders') ? 'font-bold text-black' : 'text-gray-600' }}">
-                                Daftar Pesanan
-                            </a>
-                        </div>
-                    </div>
+    <div class="space-y-5">
 
-                    <div>
-                        <p class="font-semibold">Produk</p>
-                        <div class="ml-3 mt-2 space-y-1">
-                            <a href="{{ route('seller.products') }}"
-                                class="block
-           {{ request()->routeIs('seller.products') ? 'font-bold text-black' : 'text-gray-600' }}">
-                                Produk Saya
-                            </a>
+        @forelse ($orders as $order)
+        <div class="border rounded-xl p-5 bg-white shadow-sm">
 
-                            <a href="{{ route('seller.products.create') }}"
-                                class="block
-           {{ request()->routeIs('seller.products.create') ? 'font-bold text-black' : 'text-gray-600' }}">
-                                Tambahkan Produk Baru
-                            </a>
-                        </div>
-                    </div>
-
-                    <div>
-                        <p class="font-semibold">Statistik</p>
-                        <div class="ml-3 mt-2">
-                            <a href="{{ route('seller.statistics') }}"
-                                class="block
-           {{ request()->routeIs('seller.statistics') ? 'font-bold text-black' : 'text-gray-600' }}">
-                                Statistik Penjualan
-                            </a>
-                        </div>
-                    </div>
+            {{-- HEADER --}}
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <p class="text-xs text-gray-500">Kode Pesanan</p>
+                    <p class="font-semibold text-lg">{{ $order->code }}</p>
+                    <p class="text-xs text-gray-400">{{ $order->date }}</p>
                 </div>
+
+                <span class="text-xs font-semibold px-3 py-1 rounded-full {{ $order->status_color }}">
+                    {{ $order->status }}
+                </span>
             </div>
 
-            {{-- KANAN --}}
-            <div class="col-span-9 bg-white rounded p-6">
+            {{-- BODY --}}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
 
-                <h1 class="text-xl font-semibold mb-6">
-                    Daftar Pesanan
-                </h1>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="text-gray-500">
-                                <th class="px-3 py-2 text-left font-medium">Kode</th>
-                                <th class="px-3 py-2 text-left font-medium">Tanggal</th>
-                                <th class="px-3 py-2 text-left font-medium">Pembeli</th>
-                                <th class="px-3 py-2 text-left font-medium">Produk</th>
-                                <th class="px-3 py-2 text-left font-medium">Total</th>
-                                <th class="px-3 py-2 text-left font-medium">Status</th>
-                                <th class="px-3 py-2 text-right font-medium">Aksi</th>
-                            </tr>
-                        </thead>
-
-                        <tbody class="divide-y divide-gray-100">
-                            <tr>
-                                <td class="px-3 py-3">ORD-001</td>
-                                <td class="px-3 py-3">25 Jan 2026</td>
-                                <td class="px-3 py-3">Hennessy</td>
-                                <td class="px-3 py-3">iPhone 11</td>
-                                <td class="px-3 py-3">Rp 4.500.000</td>
-                                <td class="px-3 py-3">
-                                    <span class="font-medium text-yellow-600">
-                                        Menunggu Pembayaran
-                                    </span>
-                                </td>
-                                <td class="px-3 py-3 text-right">
-                                    <button class="text-blue-600 hover:underline">
-                                        Detail
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td class="px-3 py-3">ORD-002</td>
-                                <td class="px-3 py-3">24 Jan 2026</td>
-                                <td class="px-3 py-3">Andi</td>
-                                <td class="px-3 py-3">Laptop ASUS</td>
-                                <td class="px-3 py-3">Rp 7.200.000</td>
-                                <td class="px-3 py-3">
-                                    <span class="font-medium text-blue-600">
-                                        Diproses
-                                    </span>
-                                </td>
-                                <td class="px-3 py-3 text-right">
-                                    <button class="text-blue-600 hover:underline">
-                                        Detail
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td class="px-3 py-3">ORD-003</td>
-                                <td class="px-3 py-3">23 Jan 2026</td>
-                                <td class="px-3 py-3">Budi</td>
-                                <td class="px-3 py-3">+2 Produk</td>
-                                <td class="px-3 py-3">Rp 1.850.000</td>
-                                <td class="px-3 py-3">
-                                    <span class="font-medium text-green-600">
-                                        Selesai
-                                    </span>
-                                </td>
-                                <td class="px-3 py-3 text-right">
-                                    <button class="text-blue-600 hover:underline">
-                                        Detail
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                {{-- PRODUK --}}
+                <div>
+                    <p class="text-gray-500 mb-1">Produk</p>
+                    <p class="font-medium">{{ $order->product }}</p>
+                    <p class="text-gray-400 text-xs">Qty: {{ $order->qty }}</p>
                 </div>
 
+                {{-- PEMBELI --}}
+                <div>
+                    <p class="text-gray-500 mb-1">Pembeli</p>
+                    <p class="font-medium">{{ $order->shipping->name }}</p>
+                    <p class="text-gray-400 text-xs">{{ $order->shipping->address }}</p>
+                    <p class="text-gray-400 text-xs">📞 {{ $order->shipping->phone }}</p>
+                </div>
+
+                {{-- PEMBAYARAN --}}
+                <div>
+                    <p class="text-gray-500 mb-1">Pembayaran</p>
+                    <p class="font-medium">{{ $order->payment_method }}</p>
+                    <p class="font-semibold mt-1">
+                        Rp {{ number_format($order->price * $order->qty, 0, ',', '.') }}
+                    </p>
+                </div>
+
+            </div>
+
+            {{-- FOOTER --}}
+            <div class="flex justify-end mt-5 pt-4 border-t">
+                <a href="{{ route('seller.orders.detail', $order->id) }}"
+                   class="text-sm font-semibold text-blue-600 hover:underline">
+                    Lihat Detail →
+                </a>
             </div>
 
         </div>
+        @empty
+            <p class="text-center text-gray-500">
+                Belum ada pesanan.
+            </p>
+        @endforelse
 
     </div>
+
+</div>
 @endsection
