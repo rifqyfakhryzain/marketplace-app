@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\BarangImage;
 use Illuminate\Database\Eloquent\Model;
 
 class Barang extends Model
@@ -38,5 +39,9 @@ class Barang extends Model
 {
     return $query->where('status', 'tersedia');
 }
+    public function images()
+    {
+        return $this->hasMany(BarangImage::class);
+    }
 
 }
