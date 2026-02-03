@@ -76,7 +76,20 @@
                             @forelse ($barangs as $barang)
                                 <tr>
                                     <td class="px-3 py-3 flex items-center gap-3">
-                                        <div class="w-12 h-12 bg-gray-200 rounded"></div>
+<div class="w-12 h-12 rounded overflow-hidden bg-gray-100">
+    @if ($barang->images->count())
+        <img
+            src="{{ asset('storage/' . $barang->images->first()->image_path) }}"
+            alt="{{ $barang->nama_barang }}"
+            class="w-full h-full object-cover"
+        >
+    @else
+        <div class="w-full h-full flex items-center justify-center text-xs text-gray-400">
+            No Image
+        </div>
+    @endif
+</div>
+
                                         <div>
                                             <p class="font-medium">{{ $barang->nama_barang }}</p>
                                             <p class="text-xs text-gray-500">
