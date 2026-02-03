@@ -55,6 +55,30 @@
 
                 </div>
 
+                {{-- GAMBAR PRODUK --}}
+<div class="mb-6">
+    <p class="text-gray-500 mb-2">Gambar Produk</p>
+
+    @if ($barang->images->count())
+        <div class="grid grid-cols-4 gap-4">
+            @foreach ($barang->images as $image)
+                <div class="w-full aspect-square bg-gray-100 rounded overflow-hidden">
+                    <img
+                        src="{{ asset('storage/' . $image->image_path) }}"
+                        alt="{{ $barang->nama_barang }}"
+                        class="w-full h-full object-cover"
+                    >
+                </div>
+            @endforeach
+        </div>
+    @else
+        <div class="text-gray-400 text-sm">
+            Produk ini belum memiliki gambar.
+        </div>
+    @endif
+</div>
+
+
                 {{-- DETAIL --}}
                 <div class="space-y-4 text-sm">
 
