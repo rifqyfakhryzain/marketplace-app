@@ -127,6 +127,7 @@
                     </div>
 
 {{-- GAMBAR PRODUK --}}
+{{-- GAMBAR PRODUK --}}
 <div>
     <label class="block text-sm font-medium mb-1">
         Gambar Produk
@@ -135,22 +136,22 @@
     <div class="border-2 border-dashed rounded-lg p-4">
         <input
             type="file"
-            name="gambar[]"
-            accept="image/*"
+            name="images[]"
+            id="imagesInput"
+            accept="image/png, image/jpeg"
             multiple
             class="hidden"
-            id="gambarInput"
         >
 
-        <label for="gambarInput"
+        <label for="imagesInput"
                class="cursor-pointer flex flex-col items-center gap-2 text-center">
-            <div class="grid grid-cols-4 gap-2">
-                <div class="w-20 h-20 bg-gray-100 rounded flex items-center justify-center text-gray-400">
-                    +
-                </div>
-                <div class="w-20 h-20 bg-gray-100 rounded"></div>
-                <div class="w-20 h-20 bg-gray-100 rounded"></div>
-                <div class="w-20 h-20 bg-gray-100 rounded"></div>
+
+<div id="previewContainer" class="grid grid-cols-5 gap-2">
+    @for ($i = 0; $i < 5; $i++)
+        <div class="w-20 h-20 bg-gray-100 rounded flex items-center justify-center text-gray-400">
+            +
+        </div>
+    @endfor
             </div>
 
             <span class="text-sm text-gray-600 mt-2">
@@ -162,10 +163,15 @@
         </label>
     </div>
 
-    @error('gambar')
+    @error('images')
+        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+    @enderror
+
+    @error('images.*')
         <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
     @enderror
 </div>
+
 
 
 
@@ -201,3 +207,41 @@
         </div>
     </div>
 @endsection
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('imagesInput');
+    const container = document.getElementById('previewContainer');
+
+    if (!input || !container) return;
+
+    input.addEventListener('change', function (event) {
+        container.innerHTML = '';
+
+        const files = Array.from(event.target.files).slice(0, 5);
+
+        files.forEach(file => {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'w-20 h-20 object-cover rounded';
+                container.appendChild(img);
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        for (let i = files.length; i < 5; i++) {
+            const div = document.createElement('div');
+            div.className = 'w-20 h-20 bg-gray-100 rounded flex items-center justify-center text-gray-400';
+            div.innerText = '+';
+            container.appendChild(div);
+        }
+    });
+});
+</script>
+
+
