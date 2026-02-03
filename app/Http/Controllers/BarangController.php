@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Barang;
 use App\Models\Kategori;
+use App\Models\BarangImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,22 +22,26 @@ class BarangController extends Controller
     }
 
     // BUYER - DETAIL
-    public function show($id)
-    {
-        $barang = Barang::with(['penjual', 'kategori'])->findOrFail($id);
-        return view('produk.show', compact('barang'));
-    }
+public function show($id)
+{
+    $barang = Barang::with(['penjual', 'kategori', 'images'])
+        ->findOrFail($id);
+
+    return view('produk.show', compact('barang'));
+}
+
 
     // SELLER - PRODUK SAYA
-    public function sellerIndex()
-    {
-        $barangs = Barang::with('kategori')
-            ->where('user_id', Auth::id())
-            ->latest()
-            ->get();
+public function sellerIndex()
+{
+    $barangs = Barang::with(['kategori', 'images'])
+        ->where('user_id', Auth::id())
+        ->latest()
+        ->get();
 
-        return view('seller.barang.index', compact('barangs'));
-    }
+    return view('seller.barang.index', compact('barangs'));
+}
+
 
     // SELLER - FORM TAMBAH
     public function create()
@@ -55,11 +60,26 @@ class BarangController extends Controller
             'stok'        => 'required|integer|min:0',
             'kategori_id' => 'required|exists:kategori,id',
             'status'      => 'required|in:tersedia,nonaktif',
+            'images'      => 'nullable|array|max:5',
+            'images.*'    => 'image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $validated['user_id'] = Auth::id();
 
-        Barang::create($validated);
+         $barang = Barang::create($validated);
+
+         if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $image) {
+            $path = $image->store('products', 'public');
+
+            BarangImage::create([
+                'barang_id' => $barang->id,
+                'image_path' => $path,
+            ]);
+        }
+    }
+
+
 
         return redirect()
             ->route('seller.products')
@@ -124,7 +144,7 @@ class BarangController extends Controller
             abort(403);
         }
 
-        $barang->load('kategori');
+$barang->load(['kategori', 'images']);
 
         return view('seller.barang.show', compact('barang'));
     }
