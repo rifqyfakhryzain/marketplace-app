@@ -8,24 +8,16 @@ use Illuminate\Http\Request;
 class HomeController extends Controller
 {
     // index
-    public function index()
-    {
-        $products = Barang::public()
-        ->with('penjual')
+public function index()
+{
+    $products = Barang::public()
+        ->with(['penjual', 'images'])
         ->latest()
         ->take(10)
-        ->get()
-        ->map(function ($barang)
-        {
-            return [
-                'id' => $barang->id,
-                'name' => $barang->nama_barang,
-                'price' => $barang->harga,
-                'location' => $barang->penjual->profile->alamat ?? 'indonesia',
-                'image' => asset('image/placeholder-product.jpg'),
-            ];
-        });
-        
-        return view('home', compact('products'));
-    }
+        ->get();
+
+    return view('home', compact('products'));
+}
+
+
 }
