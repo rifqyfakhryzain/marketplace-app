@@ -65,10 +65,8 @@
                     </div>
                 @endif
 
-<form method="POST"
-      action="{{ route('seller.products.store') }}"
-      enctype="multipart/form-data"
-      class="space-y-6">                    @csrf
+                <form method="POST" action="{{ route('seller.products.store') }}" enctype="multipart/form-data"
+                    class="space-y-6"> @csrf
 
                     {{-- Nama Produk --}}
                     <div>
@@ -126,51 +124,45 @@
                         </p>
                     </div>
 
-{{-- GAMBAR PRODUK --}}
-{{-- GAMBAR PRODUK --}}
-<div>
-    <label class="block text-sm font-medium mb-1">
-        Gambar Produk
-    </label>
+                    {{-- GAMBAR PRODUK --}}
+                    {{-- GAMBAR PRODUK --}}
+                    <div>
+                        <label class="block text-sm font-medium mb-1">
+                            Gambar Produk
+                        </label>
 
-    <div class="border-2 border-dashed rounded-lg p-4">
-        <input
-            type="file"
-            name="images[]"
-            id="imagesInput"
-            accept="image/png, image/jpeg"
-            multiple
-            class="hidden"
-        >
+                        <div class="border-2 border-dashed rounded-lg p-4">
+                            <input type="file" name="images[]" id="imagesInput" accept="image/png, image/jpeg" multiple
+                                class="hidden">
 
-        <label for="imagesInput"
-               class="cursor-pointer flex flex-col items-center gap-2 text-center">
+                            <label for="imagesInput" class="cursor-pointer flex flex-col items-center gap-2 text-center">
 
-<div id="previewContainer" class="grid grid-cols-5 gap-2">
-    @for ($i = 0; $i < 5; $i++)
-        <div class="w-20 h-20 bg-gray-100 rounded flex items-center justify-center text-gray-400">
-            +
-        </div>
-    @endfor
-            </div>
+                                <div id="previewContainer" class="grid grid-cols-5 gap-2">
+                                    @for ($i = 0; $i < 5; $i++)
+                                        <div
+                                            class="w-20 h-20 bg-gray-100 rounded flex items-center justify-center text-gray-400">
+                                            +
+                                        </div>
+                                    @endfor
+                                </div>
 
-            <span class="text-sm text-gray-600 mt-2">
-                Klik untuk upload beberapa gambar
-            </span>
-            <span class="text-xs text-gray-400">
-                Maks 5 gambar • JPG / PNG
-            </span>
-        </label>
-    </div>
+                                <span class="text-sm text-gray-600 mt-2">
+                                    Klik untuk upload beberapa gambar
+                                </span>
+                                <span class="text-xs text-gray-400">
+                                    Maks 5 gambar • JPG / PNG
+                                </span>
+                            </label>
+                        </div>
 
-    @error('images')
-        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-    @enderror
+                        @error('images')
+                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                        @enderror
 
-    @error('images.*')
-        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-    @enderror
-</div>
+                        @error('images.*')
+                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
 
 
@@ -210,51 +202,49 @@
 
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const input = document.getElementById('imagesInput');
-    const container = document.getElementById('previewContainer');
-    let filesArr = [];
+    document.addEventListener('DOMContentLoaded', function() {
+        const input = document.getElementById('imagesInput');
+        const container = document.getElementById('previewContainer');
+        let filesArr = [];
 
-    input.addEventListener('change', function (e) {
-        const newFiles = Array.from(e.target.files);
+        input.addEventListener('change', function(e) {
+            const newFiles = Array.from(e.target.files);
 
-        // Gabungkan file lama + baru
-        filesArr = filesArr.concat(newFiles);
+            // Gabungkan file lama + baru
+            filesArr = filesArr.concat(newFiles);
 
-        // Maksimal 5
-        if (filesArr.length > 5) {
-            alert('Maksimal 5 gambar');
-            filesArr = filesArr.slice(0, 5);
-        }
+            // Maksimal 5
+            if (filesArr.length > 5) {
+                alert('Maksimal 5 gambar');
+                filesArr = filesArr.slice(0, 5);
+            }
 
-        // Update input file
-        const dataTransfer = new DataTransfer();
-        filesArr.forEach(file => dataTransfer.items.add(file));
-        input.files = dataTransfer.files;
+            // Update input file
+            const dataTransfer = new DataTransfer();
+            filesArr.forEach(file => dataTransfer.items.add(file));
+            input.files = dataTransfer.files;
 
-        // Preview
-        container.innerHTML = '';
-        filesArr.forEach(file => {
-            const reader = new FileReader();
-            reader.onload = e => {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.className = 'w-20 h-20 object-cover rounded';
-                container.appendChild(img);
-            };
-            reader.readAsDataURL(file);
+            // Preview
+            container.innerHTML = '';
+            filesArr.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'w-20 h-20 object-cover rounded';
+                    container.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Sisa slot +
+            for (let i = filesArr.length; i < 5; i++) {
+                const div = document.createElement('div');
+                div.className =
+                    'w-20 h-20 bg-gray-100 rounded flex items-center justify-center text-gray-400';
+                div.innerText = '+';
+                container.appendChild(div);
+            }
         });
-
-        // Sisa slot +
-        for (let i = filesArr.length; i < 5; i++) {
-            const div = document.createElement('div');
-            div.className = 'w-20 h-20 bg-gray-100 rounded flex items-center justify-center text-gray-400';
-            div.innerText = '+';
-            container.appendChild(div);
-        }
     });
-});
 </script>
-
-
-
