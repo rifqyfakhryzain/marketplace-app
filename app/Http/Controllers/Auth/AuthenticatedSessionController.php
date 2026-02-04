@@ -23,21 +23,27 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
-    {
-    //      $user = User::where('email', $request->email)->first();
+public function store(LoginRequest $request): RedirectResponse
+{
+    $request->authenticate();
+    $request->session()->regenerate();
 
-    // if ($user && $user->google_id) {
-    //     return back()->withErrors([
-    //         'email' => 'Akun ini terdaftar via Google. Silakan login menggunakan Google.',
-    //     ]);
-    // }
-        $request->authenticate();
+    $user = Auth::user();
 
-        $request->session()->regenerate();
+// ADMIN
+if ($user->role === 'admin') {
+    return redirect()->route('admin.dashboard');
+}
 
-        return redirect()->intended(route('home', absolute: false));
-    }
+// SELLER
+if ($user->role === 'seller') {
+    return redirect()->route('seller.dashboard');
+}
+
+// BUYER
+return redirect()->route('home');
+}
+
 
     /**
      * Destroy an authenticated session.
