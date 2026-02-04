@@ -7,6 +7,7 @@ use App\Models\Kategori;
 use App\Models\BarangImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class BarangController extends Controller
 {
@@ -87,39 +88,56 @@ public function sellerIndex()
     }
 
     // SELLER - UPDATE
-    public function update(Request $request, $id)
-    {
-        $barang = Barang::findOrFail($id);
+public function update(Request $request, $id)
+{
+    $barang = Barang::findOrFail($id);
 
-        if ($barang->user_id !== Auth::id()) {
-            abort(403);
+    if ($barang->user_id !== Auth::id()) {
+        abort(403);
+    }
+
+    $validated = $request->validate([
+        'nama_barang' => 'required|string|max:255',
+        'deskripsi'   => 'required|string',
+        'harga'       => 'required|integer|min:0',
+        'stok'        => 'required|integer|min:0',
+        'kategori_id' => 'required|exists:kategori,id',
+        'status'      => 'required|in:tersedia,nonaktif',
+        'images'      => 'nullable|array|max:5',
+        'images.*'    => 'image|mimes:jpg,jpeg,png|max:2048',
+    ]);
+
+    $barang->update($validated);
+
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $image) {
+            $path = $image->store('products', 'public');
+
+            BarangImage::create([
+                'barang_id' => $barang->id,
+                'image_path' => $path,
+            ]);
         }
-
-        $validated = $request->validate([
-            'nama_barang' => 'required|string|max:255',
-            'deskripsi'   => 'required|string',
-            'harga'       => 'required|integer|min:0',
-            'stok'        => 'required|integer|min:0',
-            'kategori_id' => 'required|exists:kategori,id',
-            'status'      => 'required|in:tersedia,nonaktif',
-        ]);
-
-        $barang->update($validated);
-
-        return redirect()
-            ->route('seller.products')
-            ->with('success', 'Produk berhasil diperbarui');
     }
 
-    public function edit($id)
-    {
-        $barang = Barang::where('user_id', Auth::id())
-            ->findOrFail($id);
+    return redirect()
+        ->route('seller.products.edit', $barang->id)
+        ->with('success', 'Produk berhasil diperbarui');
+}
 
-        $kategori = Kategori::all();
 
-        return view('seller.barang.edit', compact('barang', 'kategori'));
-    }
+
+public function edit($id)
+{
+    $barang = Barang::with('images') 
+        ->where('user_id', Auth::id())
+        ->findOrFail($id);
+
+    $kategori = Kategori::all();
+
+    return view('seller.barang.edit', compact('barang', 'kategori'));
+}
+
 
 
     // SELLER - HAPUS
@@ -148,4 +166,20 @@ $barang->load(['kategori', 'images']);
 
         return view('seller.barang.show', compact('barang'));
     }
+
+    // Delete IMG
+    public function deleteImage($id)
+{
+    $image = BarangImage::findOrFail($id);
+    $barang = $image->barang;
+
+    if ($barang->user_id !== Auth::id()) {
+        abort(403);
+    }
+
+    Storage::disk('public')->delete($image->image_path);
+    $image->delete();
+
+    return response()->json(['success' => true]);
+}
 }
