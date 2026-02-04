@@ -55,73 +55,58 @@
 
                 </div>
 
-{{-- GAMBAR PRODUK --}}
-{{-- GAMBAR PRODUK --}}
-<div class="mb-8">
 
-    <p class="text-gray-500 mb-2">Gambar Produk</p>
+                {{-- GAMBAR PRODUK --}}
+                <div class="mb-8">
 
-    @if ($barang->images->count())
+                    <p class="text-gray-500 mb-2">Gambar Produk</p>
 
-    <div class="relative w-full max-w-md">
+                    @if ($barang->images->count())
+                        <div class="relative w-full max-w-md">
 
-        {{-- GAMBAR UTAMA --}}
-        <div class="relative group aspect-square bg-gray-100 rounded-lg overflow-hidden border">
+                            {{-- GAMBAR UTAMA --}}
+                            <div class="relative group aspect-square bg-gray-100 rounded-lg overflow-hidden border">
 
-            <img
-                id="mainImage"
-                src="{{ asset('storage/' . $barang->images->first()->image_path) }}"
-                class="w-full h-full object-cover transition duration-300"
-            >
+                                <img id="mainImage" src="{{ asset('storage/' . $barang->images->first()->image_path) }}"
+                                    class="w-full h-full object-cover transition duration-300">
 
-            {{-- OVERLAY (HOVER) --}}
-            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition"></div>
+                                {{-- OVERLAY (HOVER) --}}
+                                <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition">
+                                </div>
 
-            {{-- BUTTON LEFT --}}
-            <button
-                onclick="prevImage()"
-                class="absolute left-2 top-1/2 -translate-y-1/2
+                                {{-- BUTTON LEFT --}}
+                                <button onclick="prevImage()"
+                                    class="absolute left-2 top-1/2 -translate-y-1/2
                        bg-white/80 hover:bg-white p-2 rounded-full shadow
-                       opacity-0 group-hover:opacity-100 transition"
-            >
-                ◀
-            </button>
+                       opacity-0 group-hover:opacity-100 transition">
+                                    ◀
+                                </button>
 
-            {{-- BUTTON RIGHT --}}
-            <button
-                onclick="nextImage()"
-                class="absolute right-2 top-1/2 -translate-y-1/2
+                                {{-- BUTTON RIGHT --}}
+                                <button onclick="nextImage()"
+                                    class="absolute right-2 top-1/2 -translate-y-1/2
                        bg-white/80 hover:bg-white p-2 rounded-full shadow
-                       opacity-0 group-hover:opacity-100 transition"
-            >
-                ▶
-            </button>
-        </div>
+                       opacity-0 group-hover:opacity-100 transition">
+                                    ▶
+                                </button>
+                            </div>
 
-        {{-- THUMBNAIL --}}
-        <div
-            id="thumbContainer"
-            class="flex gap-3 mt-4 overflow-x-hidden"
-        >
-            @foreach ($barang->images as $index => $image)
-                <button
-                    onclick="setImage({{ $index }})"
-                    class="thumb w-20 h-20 flex-shrink-0 border rounded-md overflow-hidden
-                           hover:ring-2 hover:ring-blue-500 transition"
-                >
-                    <img
-                        src="{{ asset('storage/' . $image->image_path) }}"
-                        class="w-full h-full object-cover"
-                    >
-                </button>
-            @endforeach
-        </div>
-    </div>
-
-    @else
-        <p class="text-sm text-gray-400">Produk ini belum memiliki gambar.</p>
-    @endif
-</div>
+                            {{-- THUMBNAIL --}}
+                            <div id="thumbContainer" class="flex gap-3 mt-4 overflow-x-hidden">
+                                @foreach ($barang->images as $index => $image)
+                                    <button onclick="setImage({{ $index }})"
+                                        class="thumb w-20 h-20 flex-shrink-0 border rounded-md overflow-hidden
+                           hover:ring-2 hover:ring-blue-500 transition">
+                                        <img src="{{ asset('storage/' . $image->image_path) }}"
+                                            class="w-full h-full object-cover">
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+                    @else
+                        <p class="text-sm text-gray-400">Produk ini belum memiliki gambar.</p>
+                    @endif
+                </div>
 
 
 
@@ -188,9 +173,7 @@
 @endsection
 
 <script>
-    const images = @json(
-        $barang->images->map(fn($img) => asset('storage/' . $img->image_path))
-    );
+    const images = @json($barang->images->map(fn($img) => asset('storage/' . $img->image_path)));
 
     let currentIndex = 0;
 
@@ -219,5 +202,3 @@
 
     updateActiveThumb();
 </script>
-
-
