@@ -1,30 +1,27 @@
-<x-app-layout>
+@extends('layouts.app')
+
+@section('title', $user->name)
+
+@section('content')
     <div class="py-12">
         <div class="max-w-4xl mx-auto bg-white shadow rounded-lg p-6">
 
             <div class="flex items-center gap-4">
                 <img
-                    src="/img/default-avatar.png"
+                    src="{{ asset('images/avatar-placeholder.png') }}"
                     class="w-20 h-20 rounded-full object-cover"
                 >
 
                 <div>
-                    <h1 class="text-xl font-semibold">Nama Seller</h1>
-                    <p class="text-sm text-gray-500">@username</p>
+                    <h1 class="text-xl font-semibold">{{ $user->name }}</h1>
+                    <p class="text-sm text-gray-500">{{ $user->email }}</p>
                 </div>
             </div>
 
-            <div class="mt-6">
-                <h2 class="font-semibold mb-2">About</h2>
-                <p class="text-gray-700">
-                    Ini adalah deskripsi seller.
-                </p>
-            </div>
-
             <div class="mt-6 text-sm text-gray-500">
-                Joined January 2024
+                Joined {{ $user->created_at->format('F Y') }}
             </div>
 
         </div>
     </div>
-</x-app-layout>
+@endsection
