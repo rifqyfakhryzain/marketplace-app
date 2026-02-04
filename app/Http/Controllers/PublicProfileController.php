@@ -2,29 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Barang;
 use App\Models\User;
-use Illuminate\View\View;
 
 class PublicProfileController extends Controller
 {
-    /**
-     * Display public profile of a user
-     */
-    public function show(string $username): View
+    // Pubblic Profile
+    public function show(User $user)
     {
-        $user = User::where('username', $username)
-            ->select([
-                'id',
-                'name',
-                'username',
-                'avatar',
-                'bio',
-                'created_at',
-            ])
-            ->firstOrFail();
-
         return view('profile.public', compact('user'));
-        
     }
-    
+
+    // Halaman liat barang lain
+    public function products(User $user)
+    {
+        $products = Barang::where('user_id', $user->id)
+        ->where('status', 'tersedia')
+        ->latest()
+        ->get();
+
+        return view('profile.public-products', compact('user','products'));
+    }
 }
