@@ -36,12 +36,11 @@ class Barang extends Model
     }
 
     public function scopePublic($query)
-{
-    return $query->where('status', 'tersedia');
-}
+    {
+        return $query->where('status', 'tersedia');
+    }
     public function images()
     {
         return $this->hasMany(BarangImage::class);
     }
-
 }
