@@ -98,15 +98,26 @@
 
                             @forelse ($barangs as $barang)
                                 <tr>
-                                    <td class="px-3 py-3 flex items-center gap-3">
-                                        <div class="w-12 h-12 bg-gray-200 rounded"></div>
-                                        <div>
-                                            <p class="font-medium">{{ $barang->nama_barang }}</p>
-                                            <p class="text-xs text-gray-500">
-                                                Dibuat: {{ $barang->created_at->format('d M Y') }}
-                                            </p>
-                                        </div>
-                                    </td>
+<td class="px-3 py-3 flex items-center gap-3">
+    @if ($barang->images->first())
+        <img
+            src="{{ asset('storage/' . $barang->images->first()->image_path) }}"
+            class="w-12 h-12 rounded object-cover border"
+        >
+    @else
+        <div class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center text-gray-400 text-xs">
+            No Image
+        </div>
+    @endif
+
+    <div>
+        <p class="font-medium">{{ $barang->nama_barang }}</p>
+        <p class="text-xs text-gray-500">
+            Dibuat: {{ $barang->created_at->format('d M Y') }}
+        </p>
+    </div>
+</td>
+
 
                                             {{-- Price --}}
                                             <td class="px-6 py-4 font-medium text-gray-900">

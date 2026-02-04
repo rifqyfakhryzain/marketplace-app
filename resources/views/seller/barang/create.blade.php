@@ -213,28 +213,40 @@
 document.addEventListener('DOMContentLoaded', function () {
     const input = document.getElementById('imagesInput');
     const container = document.getElementById('previewContainer');
+    let filesArr = [];
 
-    if (!input || !container) return;
+    input.addEventListener('change', function (e) {
+        const newFiles = Array.from(e.target.files);
 
-    input.addEventListener('change', function (event) {
+        // Gabungkan file lama + baru
+        filesArr = filesArr.concat(newFiles);
+
+        // Maksimal 5
+        if (filesArr.length > 5) {
+            alert('Maksimal 5 gambar');
+            filesArr = filesArr.slice(0, 5);
+        }
+
+        // Update input file
+        const dataTransfer = new DataTransfer();
+        filesArr.forEach(file => dataTransfer.items.add(file));
+        input.files = dataTransfer.files;
+
+        // Preview
         container.innerHTML = '';
-
-        const files = Array.from(event.target.files).slice(0, 5);
-
-        files.forEach(file => {
+        filesArr.forEach(file => {
             const reader = new FileReader();
-
-            reader.onload = function (e) {
+            reader.onload = e => {
                 const img = document.createElement('img');
                 img.src = e.target.result;
                 img.className = 'w-20 h-20 object-cover rounded';
                 container.appendChild(img);
             };
-
             reader.readAsDataURL(file);
         });
 
-        for (let i = files.length; i < 5; i++) {
+        // Sisa slot +
+        for (let i = filesArr.length; i < 5; i++) {
             const div = document.createElement('div');
             div.className = 'w-20 h-20 bg-gray-100 rounded flex items-center justify-center text-gray-400';
             div.innerText = '+';
@@ -243,5 +255,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+
 
 

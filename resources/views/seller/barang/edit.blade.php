@@ -132,36 +132,53 @@
     </label>
 
     {{-- GAMBAR LAMA --}}
-    <div class="grid grid-cols-4 gap-3 mb-3">
-        @forelse ($barang->gambars ?? [] as $gambar)
-            <div class="relative">
-                <img src="{{ asset('storage/' . $gambar->path) }}"
-                     class="w-24 h-24 object-cover rounded border">
+{{-- GAMBAR LAMA --}}
+<div class="flex flex-wrap gap-3 mb-3">
+    @forelse ($barang->images as $image)
+        <div class="relative group w-24 h-24">
+            <img
+                src="{{ asset('storage/' . $image->image_path) }}"
+                class="w-24 h-24 object-cover rounded border"
+            >
 
-                {{-- nanti bisa tambah tombol hapus --}}
-                <span class="absolute top-1 right-1 bg-black/60 text-white text-xs px-1 rounded">
-                    Lama
-                </span>
-            </div>
-        @empty
-            <p class="text-sm text-gray-400 col-span-4">
-                Belum ada gambar
-            </p>
-        @endforelse
-    </div>
+            {{-- TOMBOL HAPUS --}}
+            <button
+                type="button"
+                onclick="deleteImage({{ $image->id }})"
+                class="absolute top-1 right-1 opacity-0 group-hover:opacity-100
+                       bg-red-600 text-white text-xs px-1 rounded transition"
+            >
+                ✕
+            </button>
+
+            {{-- LABEL LAMA --}}
+            <span class="absolute bottom-1 left-1 bg-black/60 text-white text-xs px-1 rounded">
+                Lama
+            </span>
+        </div>
+    @empty
+        <p class="text-sm text-gray-400">
+            Belum ada gambar
+        </p>
+    @endforelse
+
+    <div id="newImagesPreview" class="flex flex-wrap gap-3 mb-3"></div>
+
+</div>
+
 
     {{-- UPLOAD GAMBAR BARU --}}
     <div class="border-2 border-dashed rounded-lg p-4">
         <input
-            type="file"
-            name="gambar[]"
-            accept="image/*"
-            multiple
-            class="hidden"
-            id="gambarInput"
+   type="file"
+    name="images[]"
+    id="imagesInput"
+    accept="image/png,image/jpeg"
+    multiple
+    class="hidden"
         >
 
-        <label for="gambarInput"
+<label for="imagesInput"
                class="cursor-pointer flex flex-col items-center gap-2 text-center">
             <div class="grid grid-cols-4 gap-2">
                 <div class="w-20 h-20 bg-gray-100 rounded flex items-center justify-center text-gray-400">
@@ -219,3 +236,66 @@
         </div>
     </div>
 @endsection
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ===== DELETE GAMBAR LAMA =====
+    window.deleteImage = function(id) {
+        if (!confirm('Hapus gambar ini?')) return;
+
+        fetch(`{{ url('/seller/products/image') }}/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Gagal hapus');
+            return res.json();
+        })
+        .then(() => location.reload())
+        .catch(err => {
+            alert('Gagal menghapus gambar');
+            console.error(err);
+        });
+    }
+
+    // ===== PREVIEW GAMBAR BARU =====
+    const input = document.getElementById('imagesInput');
+    const preview = document.getElementById('newImagesPreview');
+
+    if (!input || !preview) return;
+
+    input.addEventListener('change', function () {
+        preview.innerHTML = '';
+
+        Array.from(this.files).forEach(file => {
+            if (!file.type.startsWith('image/')) return;
+
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const div = document.createElement('div');
+                div.className = 'relative w-24 h-24';
+
+                div.innerHTML = `
+                    <img src="${e.target.result}"
+                         class="w-24 h-24 object-cover rounded border">
+                    <span class="absolute bottom-1 left-1 bg-blue-600 text-white text-xs px-1 rounded">
+                        Baru
+                    </span>
+                `;
+
+                preview.appendChild(div);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    });
+
+});
+</script>
+
+
