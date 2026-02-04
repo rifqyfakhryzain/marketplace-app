@@ -23,25 +23,25 @@ class BarangController extends Controller
     }
 
     // BUYER - DETAIL
-public function show($id)
-{
-    $barang = Barang::with(['penjual', 'kategori', 'images'])
-        ->findOrFail($id);
+    public function show($id)
+    {
+        $barang = Barang::with(['penjual', 'kategori', 'images'])
+            ->findOrFail($id);
 
-    return view('produk.show', compact('barang'));
-}
+        return view('produk.show', compact('barang'));
+    }
 
 
     // SELLER - PRODUK SAYA
-public function sellerIndex()
-{
-    $barangs = Barang::with(['kategori', 'images'])
-        ->where('user_id', Auth::id())
-        ->latest()
-        ->get();
+    public function sellerIndex()
+    {
+        $barangs = Barang::with(['kategori', 'images'])
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->get();
 
-    return view('seller.barang.index', compact('barangs'));
-}
+        return view('seller.barang.index', compact('barangs'));
+    }
 
 
     // SELLER - FORM TAMBAH
@@ -67,18 +67,18 @@ public function sellerIndex()
 
         $validated['user_id'] = Auth::id();
 
-         $barang = Barang::create($validated);
+        $barang = Barang::create($validated);
 
-         if ($request->hasFile('images')) {
-        foreach ($request->file('images') as $image) {
-            $path = $image->store('products', 'public');
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('products', 'public');
 
-            BarangImage::create([
-                'barang_id' => $barang->id,
-                'image_path' => $path,
-            ]);
+                BarangImage::create([
+                    'barang_id' => $barang->id,
+                    'image_path' => $path,
+                ]);
+            }
         }
-    }
 
 
 
@@ -88,55 +88,55 @@ public function sellerIndex()
     }
 
     // SELLER - UPDATE
-public function update(Request $request, $id)
-{
-    $barang = Barang::findOrFail($id);
+    public function update(Request $request, $id)
+    {
+        $barang = Barang::findOrFail($id);
 
-    if ($barang->user_id !== Auth::id()) {
-        abort(403);
-    }
-
-    $validated = $request->validate([
-        'nama_barang' => 'required|string|max:255',
-        'deskripsi'   => 'required|string',
-        'harga'       => 'required|integer|min:0',
-        'stok'        => 'required|integer|min:0',
-        'kategori_id' => 'required|exists:kategori,id',
-        'status'      => 'required|in:tersedia,nonaktif',
-        'images'      => 'nullable|array|max:5',
-        'images.*'    => 'image|mimes:jpg,jpeg,png|max:2048',
-    ]);
-
-    $barang->update($validated);
-
-    if ($request->hasFile('images')) {
-        foreach ($request->file('images') as $image) {
-            $path = $image->store('products', 'public');
-
-            BarangImage::create([
-                'barang_id' => $barang->id,
-                'image_path' => $path,
-            ]);
+        if ($barang->user_id !== Auth::id()) {
+            abort(403);
         }
+
+        $validated = $request->validate([
+            'nama_barang' => 'required|string|max:255',
+            'deskripsi'   => 'required|string',
+            'harga'       => 'required|integer|min:0',
+            'stok'        => 'required|integer|min:0',
+            'kategori_id' => 'required|exists:kategori,id',
+            'status'      => 'required|in:tersedia,nonaktif',
+            'images'      => 'nullable|array|max:5',
+            'images.*'    => 'image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $barang->update($validated);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('products', 'public');
+
+                BarangImage::create([
+                    'barang_id' => $barang->id,
+                    'image_path' => $path,
+                ]);
+            }
+        }
+
+        return redirect()
+            ->route('seller.products.edit', $barang->id)
+            ->with('success', 'Produk berhasil diperbarui');
     }
 
-    return redirect()
-        ->route('seller.products.edit', $barang->id)
-        ->with('success', 'Produk berhasil diperbarui');
-}
 
 
+    public function edit($id)
+    {
+        $barang = Barang::with('images')
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
 
-public function edit($id)
-{
-    $barang = Barang::with('images') 
-        ->where('user_id', Auth::id())
-        ->findOrFail($id);
+        $kategori = Kategori::all();
 
-    $kategori = Kategori::all();
-
-    return view('seller.barang.edit', compact('barang', 'kategori'));
-}
+        return view('seller.barang.edit', compact('barang', 'kategori'));
+    }
 
 
 
@@ -162,24 +162,24 @@ public function edit($id)
             abort(403);
         }
 
-$barang->load(['kategori', 'images']);
+        $barang->load(['kategori', 'images']);
 
         return view('seller.barang.show', compact('barang'));
     }
 
     // Delete IMG
     public function deleteImage($id)
-{
-    $image = BarangImage::findOrFail($id);
-    $barang = $image->barang;
+    {
+        $image = BarangImage::findOrFail($id);
+        $barang = $image->barang;
 
-    if ($barang->user_id !== Auth::id()) {
-        abort(403);
+        if ($barang->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        Storage::disk('public')->delete($image->image_path);
+        $image->delete();
+
+        return response()->json(['success' => true]);
     }
-
-    Storage::disk('public')->delete($image->image_path);
-    $image->delete();
-
-    return response()->json(['success' => true]);
-}
 }
