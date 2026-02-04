@@ -18,7 +18,7 @@ use App\Http\Controllers\HomeController;
 */
 
 // Route::view('/', 'home')->name('home');
-Route::get('/',[HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Route::view('/produk/{id}', 'product-detail')->name('produk.detail');
 
@@ -146,6 +146,11 @@ Route::middleware(['auth', 'seller'])
         Route::delete('/products/{id}', [BarangController::class, 'destroy'])
             ->name('products.destroy');
 
+        // 🔹 HAPUS GAMBAR PRODUK (SATUAN)
+        Route::delete('/products/image/{id}', [BarangController::class, 'deleteImage'])
+            ->name('products.image.delete');
+
+
         // Pesanan masuk
         Route::get('/orders', [SellerController::class, 'orders'])
             ->name('orders');
@@ -175,7 +180,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/buyer/pesanan/{id}/bayar', function ($id) {
         return view('profile.buyer.Bayar', compact('id'));
     })->name('buyer.orders.pay');
-
 });
 
 
@@ -190,7 +194,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/seller/pesanan/{id}', function ($id) {
         return view('profile.seller.detailPesanan', compact('id'));
     })->name('seller.orders.detail');
-
 });
 
 use App\Http\Controllers\Admin\AdminDashboardController;
