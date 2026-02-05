@@ -3,13 +3,16 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\EscrowController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicBarangController;
+use App\Http\Controllers\PublicProfileController;
 use App\Http\Controllers\Auth\GoogleAuthController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\AdminPaymentController;
+use App\Http\Controllers\Admin\AdminDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -196,8 +199,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('seller.orders.detail');
 });
 
-use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Admin\AdminPaymentController;
+
 
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
@@ -206,3 +208,16 @@ Route::middleware(['auth', 'admin'])
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])
             ->name('dashboard');
     });
+
+
+Route::get('/users/{user}', [PublicProfileController::class, 'show'])
+    ->name('public.profile');
+
+    Route::get('/users/{user}/products', [PublicProfileController::class, 'products'])
+    ->name('public.profile.products');
+
+    // checkout
+Route::get('/profile/buyer/checkout/{product}', function ($product) {
+    return view('profile.buyer.checkout');
+})->name('buyer.checkout');
+
