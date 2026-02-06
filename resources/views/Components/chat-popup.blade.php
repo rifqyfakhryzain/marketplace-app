@@ -1,6 +1,5 @@
 <!-- CHAT POPUP OVERLAY -->
-<div id="chat-popup"
-     class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/40">
+<div id="chat-popup" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/40">
 
     <!-- CHAT CONTAINER -->
     <div class="w-[900px] h-[520px] bg-white rounded-xl shadow-2xl flex overflow-hidden">
@@ -39,15 +38,9 @@
 
             <!-- INPUT (DISABLED) -->
             <div class="h-14 border-t flex items-center px-3 gap-2 bg-gray-50">
-                <input
-                    type="text"
-                    disabled
-                    placeholder="Pilih chat terlebih dahulu"
-                    class="flex-1 border rounded-lg px-3 py-2 text-sm bg-gray-100 cursor-not-allowed"
-                />
-                <button
-                    disabled
-                    class="bg-gray-300 text-white px-4 py-2 rounded-lg text-sm cursor-not-allowed">
+                <input type="text" disabled placeholder="Pilih chat terlebih dahulu"
+                    class="flex-1 border rounded-lg px-3 py-2 text-sm bg-gray-100 cursor-not-allowed" />
+                <button disabled class="bg-gray-300 text-white px-4 py-2 rounded-lg text-sm cursor-not-allowed">
                     Kirim
                 </button>
             </div>
