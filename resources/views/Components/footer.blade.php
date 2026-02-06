@@ -15,26 +15,22 @@
             <h4 class="font-semibold mb-2">Bantuan</h4>
             <ul class="text-sm text-gray-600 space-y-1">
                 <li>
-                    <a href="/bantuan/cara-berbelanja"
-                    class="hover:text-blue-600 transition">
+                    <a href="/bantuan/cara-berbelanja" class="hover:text-blue-600 transition">
                         Cara Berbelanja
                     </a>
                 </li>
                 <li>
-                    <a href="/bantuan/cara-berjualan"
-                    class="hover:text-blue-600 transition">
+                    <a href="/bantuan/cara-berjualan" class="hover:text-blue-600 transition">
                         Cara Berjualan
                     </a>
                 </li>
                 <li>
-                    <a href="/bantuan/metode-pembayaran"
-                    class="hover:text-blue-600 transition">
+                    <a href="/bantuan/metode-pembayaran" class="hover:text-blue-600 transition">
                         Metode Pembayaran
                     </a>
                 </li>
                 <li>
-                    <a href="/bantuan"
-                    class="hover:text-blue-600 transition">
+                    <a href="/bantuan" class="hover:text-blue-600 transition">
                         Pusat Bantuan
                     </a>
                 </li>
@@ -46,20 +42,17 @@
             <h4 class="font-semibold mb-2">Tentang Kami</h4>
             <ul class="text-sm text-gray-600 space-y-1">
                 <li>
-                    <a href="/tentang"
-                    class="hover:text-blue-600 transition">
+                    <a href="/tentang" class="hover:text-blue-600 transition">
                         Tentang LUNO
                     </a>
                 </li>
                 <li>
-                    <a href="/syarat-ketentuan"
-                    class="hover:text-blue-600 transition">
+                    <a href="/syarat-ketentuan" class="hover:text-blue-600 transition">
                         Syarat & Ketentuan
                     </a>
                 </li>
                 <li>
-                    <a href="/kebijakan-privasi"
-                    class="hover:text-blue-600 transition">
+                    <a href="/kebijakan-privasi" class="hover:text-blue-600 transition">
                         Kebijakan Privasi
                     </a>
                 </li>
