@@ -47,12 +47,12 @@
             @auth
                 <div class="flex items-center gap-3 shrink-0">
 
-                        <a href="{{ route('buyer.orders') }}"
-                            class="bg-white text-blue-900
+                    <a href="{{ route('buyer.orders') }}"
+                        class="bg-white text-blue-900
                                 px-4 py-2 rounded-full
                                 text-sm font-semibold">
-                            Pesanan
-                        </a>
+                        Pesanan
+                    </a>
 
                     <!-- USER -->
                     <a href="{{ route('profile.show') }}" class="flex items-center gap-2 hover:opacity-90 transition">
