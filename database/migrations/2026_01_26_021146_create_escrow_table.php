@@ -21,13 +21,15 @@ Schema::create('escrows', function (Blueprint $table) {
     $table->integer('amount');
 
     $table->enum('status', [
-        'holding',
-        'released',
-        'refunded'
-    ])->default('holding');
+        'unverified',   // admin belum cek bukti transfer
+        'holding',      // dana ditahan
+        'released',     // dana cair ke seller
+        'refunded'      // dana kembali ke buyer
+    ])->default('unverified');
 
     $table->timestamps();
 });
+
 
     }
 
