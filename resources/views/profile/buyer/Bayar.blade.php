@@ -75,11 +75,33 @@
     {{-- ================= AKSI ================= --}}
     <div class="flex flex-col items-center gap-3">
 
-        {{-- nanti ini jadi POST konfirmasi --}}
-        <button
-            class="bg-blue-600 text-white px-6 py-2 rounded text-sm w-full max-w-xs hover:bg-blue-700 transition">
-            Saya Sudah Transfer
-        </button>
+<form
+    action="{{ route('buyer.orders.confirmTransfer', $order->id) }}"
+    method="POST"
+    class="w-full max-w-xs"
+>
+    @csrf
+
+    <button
+        type="submit"
+        class="bg-blue-600 text-white px-6 py-2 rounded text-sm w-full hover:bg-blue-700 transition"
+        onclick="return confirm('Yakin sudah melakukan transfer?')"
+    >
+        Saya Sudah Transfer
+    </button>
+</form>
+
+
+@if ($escrow->status === 'holding')
+    {{-- tombol transfer --}}
+@else
+    <div class="text-sm text-orange-600 font-medium">
+        Menunggu verifikasi admin
+    </div>
+@endif
+
+
+
 
         <a
             href="{{ route('buyer.orders.detail', $order->id) }}"
