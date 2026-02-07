@@ -5,16 +5,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BarangController;
-use App\Http\Controllers\EscrowController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicBarangController;
 use App\Http\Controllers\PublicProfileController;
-use App\Http\Controllers\Auth\GoogleAuthController;
-use App\Http\Controllers\Admin\AdminPaymentController;
-use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Buyer\BuyerPaymentController;
 use App\Http\Controllers\Buyer\CheckoutController;
+use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\Buyer\BuyerOrderController;
+use App\Http\Controllers\Admin\AdminPaymentController;
+use App\Http\Controllers\Buyer\BuyerPaymentController;
+use App\Http\Controllers\Admin\AdminDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -169,18 +169,6 @@ Route::get('/seller/orders/{order}', function ($order) {
     return view('profile.seller.detailPesanan');
 })->name('seller.orders.detail');
 
-Route::middleware(['auth'])->group(function () {
-
-    // LIST PESANAN BUYER
-    Route::get('/profile/buyer/pesanan', function () {
-        return view('profile.buyer.pesanan');
-    })->name('buyer.orders');
-
-    // DETAIL PESANAN BUYER
-    Route::get('/profile/buyer/pesanan/{id}', function ($id) {
-        return view('profile.buyer.detailPesanan', compact('id'));
-    })->name('buyer.orders.detail');
-});
 
 
 Route::middleware(['auth'])->group(function () {
@@ -242,4 +230,45 @@ Route::middleware('auth')->group(function () {
         [BuyerPaymentController::class, 'show']
     )->name('buyer.orders.pay');
 });
+
+
+// 
+Route::middleware('auth')->group(function () {
+    Route::get(
+        '/profile/buyer/pesanan',
+        [BuyerOrderController::class, 'index']
+    )->name('buyer.orders');
+});
+
+Route::middleware(['auth'])->prefix('profile/buyer')->name('buyer.')->group(function () {
+
+    // LIST PESANAN
+    Route::get('/pesanan', [BuyerOrderController::class, 'index'])
+        ->name('orders');
+
+    // DETAIL PESANAN
+    Route::get('/pesanan/{order}', [BuyerOrderController::class, 'show'])
+        ->name('orders.detail');
+
+    // HALAMAN BAYAR
+    Route::get('/pesanan/{order}/bayar', [BuyerPaymentController::class, 'show'])
+        ->name('orders.pay');
+
+    // KONFIRMASI TRANSFER
+    Route::post('/pesanan/{order}/confirm-transfer',
+        [BuyerPaymentController::class, 'confirmTransfer']
+    )->name('orders.confirmTransfer');
+});
+
+// Escrow
+use App\Http\Controllers\Admin\EscrowController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/escrows', [EscrowController::class, 'index'])
+        ->name('admin.escrows.index');
+});
+
+Route::post('/admin/escrows/{escrow}/verify', 
+    [\App\Http\Controllers\Admin\EscrowController::class, 'verify']
+)->name('admin.escrows.verify');
 
