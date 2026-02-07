@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Order extends Model
 {
@@ -24,4 +25,15 @@ class Order extends Model
     {
         return $this->belongsTo(Barang::class, 'barang_id');
     }
+
+     public function escrow(): HasOne
+    {
+        return $this->hasOne(Escrow::class);
+    }
+
+    public function buyer()
+{
+    return $this->belongsTo(User::class, 'buyer_id');
+}
+
 }
