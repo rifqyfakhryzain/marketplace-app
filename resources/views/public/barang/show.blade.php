@@ -160,11 +160,13 @@
 
                     <hr>
 
-                    <button
-                        class="w-full bg-blue-600 text-white py-3 rounded font-semibold
-                        hover:bg-blue-700 transition">
-                        BELI
-                    </button>
+<a
+    href="{{ route('buyer.checkout', $product['id']) }}"
+    class="block w-full text-center bg-blue-600 text-white py-3 rounded font-semibold
+    hover:bg-blue-700 transition">
+    BELI
+</a>
+
 
                 </div>
 
@@ -178,7 +180,8 @@
                         </a>
 
                         <div class="flex-1">
-                            <a  href="{{ route('public.profile', $product['user']['id']) }}" class="font-semibold hover:underline">
+                            <a href="{{ route('public.profile', $product['user']['id']) }}"
+                                class="font-semibold hover:underline">
                                 {{ $product['user']['name'] }}
                             </a>
                             <p class="text-xs text-gray-500">Penjual</p>
@@ -191,14 +194,12 @@
                         data-open-chat="true" data-user-id="{{ $product['user']['id'] }}">
                         Chat Penjual
                     </button>
- {{-- LIHAT BARANG SELLER --}}
-<a
-    href="{{ route('public.profile.products', $product['user']['id']) }}"
-    class="block w-full text-center border py-2 rounded text-sm
-    hover:bg-gray-50 transition"
->
-    Lihat Barang Lain
-</a>
+                    {{-- LIHAT BARANG SELLER --}}
+                    <a href="{{ route('public.profile.products', $product['user']['id']) }}"
+                        class="block w-full text-center border py-2 rounded text-sm
+    hover:bg-gray-50 transition">
+                        Lihat Barang Lain
+                    </a>
 
 
 
