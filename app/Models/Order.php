@@ -2,20 +2,26 @@
 
 namespace App\Models;
 
-use Faker\Provider\Payment;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Order extends Model
 {
     protected $fillable = [
         'buyer_id',
         'seller_id',
+        'barang_id',
+        'qty',
         'total_price',
         'status',
+        'receiver_name',
+        'phone',
+        'address',
+        'note',
     ];
 
-    public function payment()
+    public function barang(): BelongsTo
     {
-        return $this->hasOne(Payment::class);
+        return $this->belongsTo(Barang::class, 'barang_id');
     }
 }
