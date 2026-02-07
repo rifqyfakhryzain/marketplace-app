@@ -13,6 +13,8 @@ use App\Http\Controllers\PublicProfileController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Buyer\BuyerPaymentController;
+use App\Http\Controllers\Buyer\CheckoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -178,11 +180,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/buyer/pesanan/{id}', function ($id) {
         return view('profile.buyer.detailPesanan', compact('id'));
     })->name('buyer.orders.detail');
-
-    // ✅ BAYAR SEKARANG (ESCROW)
-    Route::get('/profile/buyer/pesanan/{id}/bayar', function ($id) {
-        return view('profile.buyer.Bayar', compact('id'));
-    })->name('buyer.orders.pay');
 });
 
 
@@ -213,11 +210,36 @@ Route::middleware(['auth', 'admin'])
 Route::get('/users/{user}', [PublicProfileController::class, 'show'])
     ->name('public.profile');
 
-    Route::get('/users/{user}/products', [PublicProfileController::class, 'products'])
+Route::get('/users/{user}/products', [PublicProfileController::class, 'products'])
     ->name('public.profile.products');
 
-    // checkout
-Route::get('/profile/buyer/checkout/{product}', function ($product) {
-    return view('profile.buyer.checkout');
-})->name('buyer.checkout');
+
+
+/*
+|--------------------------------------------------------------------------
+| Checkout
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/profile/buyer/checkout/{barang}', [CheckoutController::class, 'show'])
+    ->middleware('auth')
+    ->name('buyer.checkout');
+
+Route::post('/profile/buyer/checkout/{barang}', [CheckoutController::class, 'store'])
+    ->middleware('auth')
+    ->name('buyer.checkout.store');
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Order
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+    Route::get(
+        '/profile/buyer/pesanan/{order}/bayar',
+        [BuyerPaymentController::class, 'show']
+    )->name('buyer.orders.pay');
+});
 
