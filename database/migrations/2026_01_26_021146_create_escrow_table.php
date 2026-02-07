@@ -11,15 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('escrow', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('buyer_id')->constrained('users');
-            $table->foreignId('seller_id')->constrained('users');
-            $table->decimal('amount', 15, 2);
-            $table->enum('status', ['pending', 'approved', 'rejected']);
-            $table->foreignId('admin_id')->nullable()->constrained('users');
-            $table->timestamps();
-        });
+Schema::create('escrows', function (Blueprint $table) {
+    $table->id();
+
+    $table->foreignId('order_id')
+        ->constrained()
+        ->cascadeOnDelete();
+
+    $table->integer('amount');
+
+    $table->enum('status', [
+        'holding',
+        'released',
+        'refunded'
+    ])->default('holding');
+
+    $table->timestamps();
+});
+
     }
 
     /**
@@ -27,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('escrow');
+        Schema::dropIfExists('escrows');
     }
 };
