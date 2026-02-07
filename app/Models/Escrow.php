@@ -7,19 +7,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Escrow extends Model
 {
+    protected $table = 'escrows';
     protected $fillable = [
-        'buyer_id',
-        'seller_id',
+        'order_id',
         'amount',
         'status',
-        'admin_id',
     ];
 
-    public function buyer() {
-        return $this->belongsTo(User::class, 'buyer_id');
-    }
-
-    public function  seller() {
-        return $this->belongsTo(User::class, 'seller_id');
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
     }
 }
+
