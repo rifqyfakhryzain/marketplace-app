@@ -18,17 +18,39 @@ class EscrowController extends Controller
     }
 
     public function verify(Escrow $escrow)
-{
-    // update escrow
-    $escrow->update([
-        'status' => 'holding',
-    ]);
+    {
+        // update escrow
+        $escrow->update([
+            'status' => 'holding',
+        ]);
 
-    // update order
-    $escrow->order->update([
-        'status' => 'processed',
-    ]);
+        // update order
+        $escrow->order->update([
+            'status' => 'processed',
+        ]);
 
-    return redirect()->back()->with('success', 'Pembayaran berhasil diverifikasi');
-}
+        return redirect()->back()->with('success', 'Pembayaran berhasil diverifikasi');
+    }
+
+    public function release(Escrow $escrow)
+    {
+        // proteksi status
+        if ($escrow->status !== 'ready') {
+            return back()->with('error', 'Escrow belum siap dicairkan');
+        }
+
+        // update escrow
+        $escrow->update([
+            'status' => 'released',
+        ]);
+
+        // pastikan order completed
+        if ($escrow->order) {
+            $escrow->order->update([
+                'status' => 'completed',
+            ]);
+        }
+
+        return back()->with('success', 'Dana berhasil dicairkan ke penjual');
+    }
 }
