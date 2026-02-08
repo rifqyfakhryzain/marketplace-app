@@ -11,26 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-Schema::create('escrows', function (Blueprint $table) {
-    $table->id();
+        Schema::create('escrows', function (Blueprint $table) {
+            $table->id();
 
-    $table->foreignId('order_id')
-        ->constrained()
-        ->cascadeOnDelete();
+            $table->foreignId('order_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->integer('amount');
+            $table->integer('amount');
 
-    $table->enum('status', [
-        'unverified',   // admin belum cek bukti transfer
-        'holding',      // dana ditahan
-        'released',     // dana cair ke seller
-        'refunded'      // dana kembali ke buyer
-    ])->default('unverified');
+            $table->enum('status', [
+                'unverified',   // admin belum cek bukti transfer
+                'holding',      // dana ditahan
+                'released',     // dana cair ke seller
+                'refunded'      // dana kembali ke buyer
+            ])->default('unverified');
 
-    $table->timestamps();
-});
-
-
+            $table->timestamps();
+        });
     }
 
     /**
