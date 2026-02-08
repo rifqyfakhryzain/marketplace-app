@@ -26,14 +26,18 @@ class Order extends Model
         return $this->belongsTo(Barang::class, 'barang_id');
     }
 
-     public function escrow(): HasOne
+    public function escrow(): HasOne
     {
         return $this->hasOne(Escrow::class);
     }
 
     public function buyer()
-{
-    return $this->belongsTo(User::class, 'buyer_id');
-}
+    {
+        return $this->belongsTo(User::class, 'buyer_id');
+    }
 
+    public function seller()
+    {
+        return $this->belongsTo(User::class, 'seller_id');
+    }
 }
