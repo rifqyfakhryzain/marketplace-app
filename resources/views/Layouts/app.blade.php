@@ -11,6 +11,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 </head>
 
+{{-- Map --}}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ asset('js/product-map.js') }}"></script>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+
+
 <body class="bg-gray-50 min-h-screen flex flex-col">
 
     {{-- NAVBAR --}}
