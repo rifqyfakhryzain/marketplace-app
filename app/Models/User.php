@@ -21,6 +21,8 @@ class User extends Authenticatable
         'no_telepon',
         'alamat',
         'avatar',
+            'latitude',
+    'longitude',
     ];
 
     protected $hidden = [
