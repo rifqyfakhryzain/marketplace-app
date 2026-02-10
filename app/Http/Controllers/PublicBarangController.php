@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
-use Illuminate\Http\Request;
 
 class PublicBarangController extends Controller
 {
@@ -13,12 +12,15 @@ class PublicBarangController extends Controller
             abort(404);
         }
 
-        $barang->load(['images', 'penjual']);
+        $barang->load([
+            'images',
+            'penjual:id,name,latitude,longitude'
+        ]);
 
         $images = $barang->images->count()
             ? $barang->images
-            ->map(fn($img) => asset('storage/' . $img->image_path))
-            ->toArray()
+                ->map(fn ($img) => asset('storage/' . $img->image_path))
+                ->toArray()
             : [asset('images/placeholder-product.jpg')];
 
         $product = [
@@ -26,13 +28,16 @@ class PublicBarangController extends Controller
             'name' => $barang->nama_barang,
             'description' => $barang->deskripsi,
             'price' => $barang->harga,
-            'location' => 'Indonesia',
+            'location' => 'Lokasi Penjual', // ⬅️ supaya Blade tidak error
             'images' => $images,
             'user' => [
                 'id' => $barang->penjual->id,
                 'name' => $barang->penjual->name,
-                'username' => $barang->penjual->username,
-                'avatar' => asset('images/avatar-placeholder.png'),
+                'avatar' => $barang->penjual->avatar
+                    ? asset('storage/' . $barang->penjual->avatar)
+                    : asset('images/avatar-placeholder.png'),
+                'latitude' => $barang->penjual->latitude,
+                'longitude' => $barang->penjual->longitude,
             ],
         ];
 
@@ -40,5 +45,6 @@ class PublicBarangController extends Controller
             'product' => $product,
             'ratings' => [],
         ]);
+        
     }
 }
