@@ -205,18 +205,16 @@
 
                 </div>
 
-                {{-- ================= MAP AREA (COVERAGE ONLY | 4:3) ================= --}}
 {{-- ================= MAP AREA ================= --}}
-{{-- ================= MAP AREA ================= --}}
-<div class="border rounded-lg bg-white p-2 overflow-hidden">
+<div class="border rounded-lg bg-white p-2">
     <div
         id="map"
-        class="w-full rounded"
-        style="height: 260px"
+        class="w-full h-[260px] rounded flex items-center justify-center text-sm text-gray-500 bg-gray-50"
         data-lat="{{ $product['user']['latitude'] ?? '' }}"
         data-lng="{{ $product['user']['longitude'] ?? '' }}"
     ></div>
 </div>
+
 
 
 
