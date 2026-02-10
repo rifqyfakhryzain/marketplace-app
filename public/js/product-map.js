@@ -5,16 +5,23 @@ window.addEventListener("load", () => {
     const lat = Number(mapEl.dataset.lat);
     const lng = Number(mapEl.dataset.lng);
 
+    // ❌ JIKA BELUM DISET → JANGAN INIT LEAFLET
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-        mapEl.innerHTML =
-            "<p style='text-align:center;padding:1rem;color:#888'>Lokasi penjual belum diset</p>";
+        mapEl.innerHTML = `
+            <div style="text-align:center">
+                <strong>📍 Lokasi belum tersedia</strong><br>
+                <span style="font-size:12px;color:#888">
+                    Penjual belum mengatur lokasi
+                </span>
+            </div>
+        `;
         return;
     }
 
+    // ✅ BARU INIT MAP JIKA VALID
     const map = L.map(mapEl, {
         zoomControl: true,
         scrollWheelZoom: false,
-        dragging: true,
     }).setView([lat, lng], 15);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -22,21 +29,20 @@ window.addEventListener("load", () => {
         attribution: "&copy; OpenStreetMap contributors",
     }).addTo(map);
 
-    // 🔵 RADIUS SAJA (TANPA MARKER)
+    // 🔵 HANYA RADIUS (TANPA PIN)
     const circle = L.circle([lat, lng], {
-        radius: 500, // meter
+        radius: 500,
         color: "#2563eb",
         fillColor: "#3b82f6",
         fillOpacity: 0.25,
         weight: 2,
     }).addTo(map);
 
-    // Fokus ke radius
     map.fitBounds(circle.getBounds(), {
         padding: [20, 20],
     });
 
-    // 🔥 FIX ukuran map di halaman berat
+    // FIX ukuran
     setTimeout(() => map.invalidateSize(), 400);
     setTimeout(() => map.invalidateSize(true), 900);
 });
