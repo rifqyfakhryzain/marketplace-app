@@ -1,6 +1,6 @@
 @extends('Layouts.app')
 
-@section('title', $product['name'])
+@section('title', $product['name'] ?? 'Detail Produk')
 
 @section('content')
     <div class="max-w-7xl mx-auto px-4 py-6">
@@ -148,7 +148,7 @@
                             </h1>
 
                             <p class="text-sm text-gray-500">
-                                {{ $product['location'] }}
+{{ $product['location'] ?? 'Lokasi penjual' }}
                             </p>
                         </div>
 
@@ -206,26 +206,19 @@
                 </div>
 
                 {{-- ================= MAP AREA (COVERAGE ONLY | 4:3) ================= --}}
-                <div class="border rounded-lg bg-white p-2">
+{{-- ================= MAP AREA ================= --}}
+{{-- ================= MAP AREA ================= --}}
+<div class="border rounded-lg bg-white p-2 overflow-hidden">
+    <div
+        id="map"
+        class="w-full rounded"
+        style="height: 260px"
+        data-lat="{{ $product['user']['latitude'] ?? '' }}"
+        data-lng="{{ $product['user']['longitude'] ?? '' }}"
+    ></div>
+</div>
 
-                    <div id="map" class="relative w-full aspect-[4/3] rounded overflow-hidden bg-gray-100">
-                        {{-- DUMMY MAP GRID --}}
-                        <div
-                            class="absolute inset-0 bg-[radial-gradient(circle_at_center,#e5e7eb_1px,transparent_1px)] bg-[size:16px_16px]">
-                        </div>
 
-                        {{-- AREA LINGKARAN (COVERAGE) --}}
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <div
-                                class="w-48 h-48 rounded-full
-                                bg-blue-500/20
-                                border border-blue-500/40">
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
 
             </div>
 
