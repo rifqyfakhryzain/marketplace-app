@@ -4,7 +4,7 @@
     @include('components.ads-slider')
 
     <div class="mb-16">
-        @include('components.categories')
+@include('components.categories', ['categories' => $categories])
     </div>
 
     <div class="max-w-7xl mx-auto px-6 mt-12">
@@ -17,13 +17,20 @@
         <div class="overflow-x-auto">
             <div class="flex gap-4 pb-2">
 
-                @foreach ($products as $product)
-                    @include('components.product-card', ['product' => $product])
-                @endforeach
+@foreach ($products as $product)
+    @include('components.product-card', [
+        'product' => $product,
+        'horizontal' => true
+    ])
+@endforeach
+
+
             </div>
         </div>
 
     </div>
 
-    @include('components.rekomendasi')
+    {{-- 🔥 INI YANG DIPERBAIKI --}}
+    @include('components.rekomendasi', ['products' => $rekomendasi])
+
 @endsection
