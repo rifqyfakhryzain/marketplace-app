@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Escrow;
+use Illuminate\Support\Facades\DB;
+use App\Models\WalletTransaction;
+
 
 class EscrowController extends Controller
 {
@@ -34,22 +37,36 @@ class EscrowController extends Controller
 
     public function release(Escrow $escrow)
     {
-        // proteksi status
         if ($escrow->status !== 'ready') {
             return back()->with('error', 'Escrow belum siap dicairkan');
         }
 
-        // update escrow
-        $escrow->update([
-            'status' => 'released',
-        ]);
+        DB::transaction(function () use ($escrow) {
 
-        // pastikan order completed
-        if ($escrow->order) {
+            $seller = $escrow->order->barang->penjual;
+            $wallet = $seller->wallet;
+
+            // Tambah saldo seller
+            $wallet->increment('balance', $escrow->amount);
+
+            // Catat transaksi wallet
+            WalletTransaction::create([
+                'wallet_id' => $wallet->id,
+                'type' => 'credit',
+                'amount' => $escrow->amount,
+                'description' => 'Dana escrow dicairkan oleh admin'
+            ]);
+
+            // Update escrow
+            $escrow->update([
+                'status' => 'released',
+            ]);
+
+            // Update order
             $escrow->order->update([
                 'status' => 'completed',
             ]);
-        }
+        });
 
         return back()->with('success', 'Dana berhasil dicairkan ke penjual');
     }
