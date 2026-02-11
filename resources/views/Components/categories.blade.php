@@ -3,7 +3,7 @@
     <div class="overflow-x-auto py-4 hide-scroll">
         <div class="flex gap-4 w-max px-2">
 
-            @php
+            {{-- @php
                 // SAYA MENGGANTI SEMUA ICON MENJADI TIPE "SOLID" (ISI PENUH)
                 // Agar terlihat bagus saat diberi warna.
                 $categories = [
@@ -50,42 +50,50 @@
                             '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7"><path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.75 3c1.99 0 3.751.984 4.822 2.483C13.699 3.984 15.46 3 17.45 3c3.036 0 5.5 2.322 5.5 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" /></svg>',
                     ],
                 ];
-            @endphp
+            @endphp --}}
 
-            @foreach ($categories as $cat)
-                <div class="group flex flex-col items-center w-[80px] shrink-0 cursor-pointer">
+            <a href="{{ route('home') }}"
+   class="group flex flex-col items-center w-[80px] shrink-0">
 
-                    <div
-                        class="w-[58px] h-[58px]
-                                flex items-center justify-center
-                                rounded-2xl
-                                shadow-sm
-                                border
-                                transition-all duration-300 ease-in-out
-                                transform group-hover:-translate-y-1
-                                
-                                /* STATE NORMAL: */
-                                bg-blue-50         /* Background biru sangat muda */
-                                border-blue-100    /* Border biru muda */
-                                text-blue-600      /* Icon warna biru tema */
+    <div class="w-[58px] h-[58px] flex items-center justify-center
+                rounded-2xl shadow-sm border
+                bg-gray-100 border-gray-200 text-gray-600
+                group-hover:bg-blue-600 group-hover:text-white transition">
 
-                                /* STATE HOVER: */
-                                group-hover:bg-blue-600    /* Background jadi biru tema */
-                                group-hover:border-blue-600 /* Border nyatu sama background */
-                                group-hover:text-white     /* Icon jadi putih agar kontras */
-                                group-hover:shadow-md
-                                ">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             class="w-6 h-6"
+             fill="currentColor"
+             viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+        </svg>
+    </div>
 
-                        {!! $cat['icon'] !!}
+    <p class="text-xs font-medium mt-2 text-center">
+        Semua
+    </p>
+</a>
 
-                    </div>
 
-                    <p
-                        class="text-xs font-medium text-gray-600 mt-2 text-center group-hover:text-blue-600 transition-colors">
-                        {{ $cat['name'] }}
-                    </p>
-                </div>
-            @endforeach
+@foreach ($categories as $cat)
+    <a href="{{ route('kategori.filter', $cat->id) }}"
+       class="group flex flex-col items-center w-[80px] shrink-0">
+
+        <div class="w-[58px] h-[58px] flex items-center justify-center
+                    rounded-2xl shadow-sm border
+                    bg-blue-50 border-blue-100 text-blue-600
+                    group-hover:bg-blue-600 group-hover:text-white transition">
+
+            {!! $cat->icon !!}
+        </div>
+
+        <p class="text-xs font-medium text-gray-600 mt-2 text-center group-hover:text-blue-600">
+            {{ $cat->nama_kategori }}
+        </p>
+    </a>
+@endforeach
+
+
+
 
         </div>
     </div>
