@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use App\Models\Kategori;
 
 class PublicBarangController extends Controller
 {
@@ -47,4 +48,18 @@ class PublicBarangController extends Controller
         ]);
         
     }
+
+public function byKategori($id)
+{
+    $kategori = Kategori::findOrFail($id);
+
+    $products = Barang::public()
+        ->where('kategori_id', $kategori->id)
+        ->with(['penjual', 'images'])
+        ->latest()
+        ->paginate(12);
+
+    return view('produk.index', compact('products', 'kategori'));
+}
+
 }
