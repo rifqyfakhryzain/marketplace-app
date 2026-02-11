@@ -1,6 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| CONTROLLERS
+|--------------------------------------------------------------------------
+*/
+
 use App\Http\Controllers\{
     HomeController,
     ChatController,
@@ -10,16 +17,25 @@ use App\Http\Controllers\{
     PublicBarangController,
     PublicProfileController
 };
+
 use App\Http\Controllers\Auth\GoogleAuthController;
+
 use App\Http\Controllers\Buyer\{
     CheckoutController,
     BuyerOrderController,
     BuyerPaymentController
 };
-use App\Http\Controllers\Seller\OrderController as SellerOrderController;
+
+use App\Http\Controllers\Seller\{
+    OrderController as SellerOrderController,
+    WithdrawalController as SellerWithdrawalController,
+    StatisticsController
+};
+
 use App\Http\Controllers\Admin\{
     AdminDashboardController,
-    EscrowController
+    EscrowController,
+    WithdrawalController
 };
 
 /*
@@ -30,6 +46,7 @@ use App\Http\Controllers\Admin\{
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+/* Static Pages */
 Route::view('/bantuan', 'pages.bantuan');
 Route::view('/bantuan/cara-berbelanja', 'pages.cara-berbelanja');
 Route::view('/bantuan/cara-berjualan', 'pages.cara-berjualan');
@@ -53,13 +70,17 @@ Route::get('/users/{user}', [PublicProfileController::class, 'show'])
 Route::get('/users/{user}/products', [PublicProfileController::class, 'products'])
     ->name('public.profile.products');
 
+/* Kategori */
+Route::get('/kategori/{id}', [HomeController::class, 'filterKategori'])
+    ->name('kategori.filter');
+
 /*
 |--------------------------------------------------------------------------
 | AUTH
 |--------------------------------------------------------------------------
 */
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 /* Google Auth */
 Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])
@@ -107,18 +128,21 @@ Route::middleware('auth')
         /* Checkout */
         Route::get('/checkout/{barang}', [CheckoutController::class, 'show'])
             ->name('checkout');
+
         Route::post('/checkout/{barang}', [CheckoutController::class, 'store'])
             ->name('checkout.store');
 
         /* Orders */
         Route::get('/pesanan', [BuyerOrderController::class, 'index'])
             ->name('orders');
+
         Route::get('/pesanan/{order}', [BuyerOrderController::class, 'show'])
             ->name('orders.detail');
 
         /* Payment */
         Route::get('/pesanan/{order}/bayar', [BuyerPaymentController::class, 'show'])
             ->name('orders.pay');
+
         Route::post('/pesanan/{order}/confirm-transfer', [BuyerPaymentController::class, 'confirmTransfer'])
             ->name('orders.confirmTransfer');
 
@@ -156,7 +180,12 @@ Route::middleware(['auth', 'seller'])
         Route::post('/orders/{order}/ship', [SellerOrderController::class, 'ship'])->name('orders.ship');
 
         /* Statistics */
-        Route::get('/statistics', [SellerController::class, 'statistics'])->name('statistics');
+        Route::get('/statistics', [StatisticsController::class, 'index'])
+            ->name('statistics');
+
+        /* Withdraw */
+        Route::post('/withdraw', [SellerWithdrawalController::class, 'store'])
+            ->name('withdraw.store');
     });
 
 /*
@@ -182,4 +211,11 @@ Route::middleware(['auth', 'admin'])
 
         Route::post('/escrows/{escrow}/release', [EscrowController::class, 'release'])
             ->name('escrows.release');
+
+        /* Withdrawals */
+        Route::get('/withdrawals', [WithdrawalController::class, 'index'])
+            ->name('withdraw.index');
+
+        Route::post('/withdrawals/{withdrawal}/approve', [WithdrawalController::class, 'approve'])
+            ->name('withdraw.approve');
     });
