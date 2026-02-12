@@ -30,7 +30,6 @@
 
     </div>
 
-    {{-- 🔥 INI YANG DIPERBAIKI --}}
     @include('components.rekomendasi', ['products' => $rekomendasi])
 
 @endsection
