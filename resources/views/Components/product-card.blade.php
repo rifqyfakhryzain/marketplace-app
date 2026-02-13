@@ -1,5 +1,5 @@
 @isset($product)
-<div class="{{ $horizontal ?? false ? 'w-[220px] shrink-0' : 'max-w-[220px] mx-auto' }}">
+<div class="{{ $horizontal ?? false ? 'w-[220px] shrink-0' : 'w-[220px]' }}">
 
 <a href="{{ route('products.show', $product->id) }}"
    class="block">
