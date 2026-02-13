@@ -7,21 +7,19 @@
         </p>
     </div>
 
-    <div class="overflow-x-auto">
-        <div class="flex gap-4 pb-2">
+<div class="flex flex-wrap gap-4 items-start">
 
-            @forelse ($products as $barang)
-                @include('components.product-card', [
-                    'product' => $barang,
-                    'horizontal' => true
-                ])
-            @empty
-                <p class="text-gray-500">
-                    Belum ada rekomendasi produk.
-                </p>
-            @endforelse
+        @forelse ($products as $barang)
+            @include('components.product-card', [
+                'product' => $barang,
+                'horizontal' => false
+            ])
+        @empty
+            <p class="text-gray-500 w-full">
+                Belum ada rekomendasi produk.
+            </p>
+        @endforelse
 
-        </div>
     </div>
 
 </div>
