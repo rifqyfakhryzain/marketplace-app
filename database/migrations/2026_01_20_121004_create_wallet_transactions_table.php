@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,8 +13,8 @@ return new class extends Migration
         Schema::create('wallet_transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('wallet_id')->constrained()->cascadeOnDelete();
-            $table->enum('type',['credit','debit','hold','release']);
-            $table->decimal('amount',15,2);
+            $table->enum('type', ['credit', 'debit', 'hold', 'release']);
+            $table->decimal('amount', 15, 2);
             $table->string('description')->nullable();
             $table->unsignedBigInteger('reference_id')->nullable(); //Order ID
             $table->timestamps();
