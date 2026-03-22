@@ -3,280 +3,188 @@
 @section('title', $product['name'] ?? 'Detail Produk')
 
 @section('content')
-    <div class="max-w-7xl mx-auto px-4 py-6">
+    {{-- CSS TAMBAHAN UNTUK FIX LEAFLET & SCROLL --}}
+    <style>
+        /* Mencegah peta (leaflet) muncul di atas modal zoom */
+        .leaflet-container, .leaflet-pane, .leaflet-top, .leaflet-bottom {
+            z-index: 1 !important;
+        }
+        /* Hide scrollbar saat zoom aktif */
+        .no-scroll { overflow: hidden; }
+        /* Style tambahan untuk scrollbar thumbnails */
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-            {{-- ================= LEFT : FOTO + PREVIEW (SATU WRAPPER) ================= --}}
-            <div class="lg:col-span-8">
+            {{-- ================= LEFT : FOTO + PREVIEW ================= --}}
+            <div class="lg:col-span-8 space-y-6">
+                {{-- Alpine.js Data dengan fitur Lock Scroll --}}
                 <div x-data="{
                     active: 0,
                     zoom: false,
                     images: @js($product['images']),
-                    prev() {
-                        this.active = this.active === 0 ?
-                            this.images.length - 1 :
-                            this.active - 1
-                    },
-                    next() {
-                        this.active = this.active === this.images.length - 1 ?
-                            0 :
-                            this.active + 1
-                    }
-                }" class="border rounded-lg bg-white p-4 space-y-3">
+                    prev() { this.active = this.active === 0 ? this.images.length - 1 : this.active - 1 },
+                    next() { this.active = this.active === this.images.length - 1 ? 0 : this.active + 1 }
+                }" 
+                x-effect="zoom ? document.body.classList.add('no-scroll') : document.body.classList.remove('no-scroll')"
+                class="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm overflow-hidden">
 
-                    {{-- FOTO UTAMA + PANAH --}}
-                    <div class="relative rounded">
-
-                        {{-- INNER WRAPPER (BIAR FOTO KECILIN) --}}
-                        <div class="px-12 py-4">
+                    {{-- FOTO UTAMA --}}
+                    <div class="relative group">
+                        <div class="overflow-hidden rounded-[2rem] bg-slate-50 border border-slate-50">
                             <img :src="images[active]" @click="zoom = true"
-                                class="w-full aspect-[4/3] object-cover rounded bg-gray-100 cursor-zoom-in" alt="Foto Produk">
-
+                                class="w-full aspect-[4/3] object-contain cursor-zoom-in hover:scale-105 transition duration-500" 
+                                alt="Foto Produk">
                         </div>
 
-                        {{-- PANAH KIRI --}}
-                        <button @click="prev"
-                            class="absolute left-4 top-1/2 -translate-y-1/2
-                            w-14 h-14 rounded-full
-                            bg-white shadow-lg
-                            flex items-center justify-center
-                            text-2xl font-bold
-                            hover:bg-gray-100 transition">
-                            ‹
+                        {{-- NAVIGATION PANAH --}}
+                        <button @click="prev" class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-2xl bg-white/90 backdrop-blur shadow-xl flex items-center justify-center text-slate-800 hover:bg-luno-primary hover:text-white transition-all opacity-0 group-hover:opacity-100">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
                         </button>
-
-                        {{-- PANAH KANAN --}}
-                        <button @click="next"
-                            class="absolute right-4 top-1/2 -translate-y-1/2
-                            w-14 h-14 rounded-full
-                            bg-white shadow-lg
-                            flex items-center justify-center
-                            text-2xl font-bold
-                            hover:bg-gray-100 transition">
-                            ›
+                        <button @click="next" class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-2xl bg-white/90 backdrop-blur shadow-xl flex items-center justify-center text-slate-800 hover:bg-luno-primary hover:text-white transition-all opacity-0 group-hover:opacity-100">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                         </button>
-
                     </div>
 
-
-                    {{-- PREVIEW / THUMBNAIL (DALAM WRAPPER YANG SAMA) --}}
-                    <div class="flex gap-3 overflow-x-auto py-2 px-1 scrollbar-hide">
+                    {{-- THUMBNAILS --}}
+                    <div class="flex gap-4 overflow-x-auto py-6 scrollbar-hide">
                         <template x-for="(img, index) in images" :key="index">
                             <button @click="active = index"
-                                class="flex-shrink-0 w-24 aspect-[4/3]
-           border rounded overflow-hidden
-           transition
-           hover:scale-105 hover:shadow-md"
-                                :class="active === index ? 'outline outline-2 outline-blue-600' : ''">
-
-                                <img :src="img" class="w-full h-full object-cover bg-gray-100">
+                                class="flex-shrink-0 w-24 aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 shadow-sm"
+                                :class="active === index ? 'border-luno-primary ring-4 ring-luno-primary/10' : 'border-transparent opacity-60 hover:opacity-100'">
+                                <img :src="img" class="w-full h-full object-cover">
                             </button>
                         </template>
                     </div>
 
-                    <!-- ZOOM MODAL -->
-                    <div x-show="zoom" x-transition @click.self="zoom = false"
-                        class="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-6">
-                        <!-- CLOSE BUTTON -->
-                        <button @click="zoom = false"
-                            class="absolute top-6 right-6
-               w-10 h-10 rounded-full
-               bg-white text-black text-xl
-               flex items-center justify-center
-               hover:bg-gray-200">
-                            ✕
+                    {{-- REVISI FULL: ZOOM MODAL (TETAP DI TENGAH & Z-INDEX TINGGI) --}}
+                    <div x-show="zoom" 
+                        x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition ease-in duration-200"
+                        class="fixed inset-0 z-[9999] bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4 sm:p-10" 
+                        style="display: none;"
+                        @click.self="zoom = false"
+                        @keydown.escape.window="zoom = false">
+                        
+                        {{-- Tombol Tutup --}}
+                        <button @click="zoom = false" class="absolute top-6 right-6 text-white/50 hover:text-white transition-all z-[10000] p-2">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
                         </button>
 
-                        <!-- IMAGE -->
-                        <img :src="images[active]"
-                            class="max-w-full max-h-full object-contain
-               cursor-zoom-out
-               transition-transform duration-300">
+                        {{-- Kontainer Gambar --}}
+                        <div class="relative w-full h-full flex items-center justify-center" @click.self="zoom = false">
+                            <img :src="images[active]" 
+                                class="max-w-full max-h-full object-contain rounded-2xl shadow-2xl transition-transform duration-500"
+                                x-transition:enter="transition ease-out duration-500"
+                                x-transition:enter-start="scale-90 opacity-0"
+                                x-transition:enter-end="scale-100 opacity-100">
+                        </div>
                     </div>
-
                 </div>
 
-
-                {{-- ================= DESKRIPSI PRODUK ================= --}}
-                <div x-data="{ open: false }" class="border rounded-lg bg-white p-4 relative">
-                    <h2 class="font-semibold mb-2">Deskripsi</h2>
-
-                    {{-- TEKS + FADE --}}
+                {{-- DESKRIPSI --}}
+                <div x-data="{ open: false }" class="bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm">
+                    <h2 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-4">Deskripsi Produk</h2>
                     <div class="relative">
-                        <div class="text-sm text-gray-700 leading-relaxed" :class="open ? '' : 'line-clamp-3'">
+                        <div class="text-slate-600 leading-relaxed text-sm sm:text-base" :class="open ? '' : 'line-clamp-6'">
                             {!! nl2br(e($product['description'] ?? '')) !!}
                         </div>
-
-                        {{-- FADE --}}
-                        <div x-show="!open"
-                            class="pointer-events-none absolute inset-x-0 bottom-0 h-8
-                            bg-gradient-to-t from-white to-transparent">
-                        </div>
+                        <div x-show="!open" class="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
                     </div>
-
-                    {{-- TOGGLE (TENGAH) --}}
-                    <div class="flex justify-center">
-                        <button x-show="!open" @click="open = true"
-                            class="mt-2 text-blue-600 text-sm font-medium hover:underline">
-                            Selengkapnya
-                        </button>
-
-                        <button x-show="open" @click="open = false"
-                            class="mt-2 text-blue-600 text-sm font-medium hover:underline">
-                            Tutup
-                        </button>
-                    </div>
+                    <button @click="open = !open" class="mt-4 text-sm font-black text-luno-primary hover:text-luno-primary-dark flex items-center gap-1">
+                        <span x-text="open ? 'Tampilkan Lebih Sedikit' : 'Baca Selengkapnya'"></span>
+                        <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
                 </div>
-
             </div>
 
             {{-- ================= RIGHT COLUMN ================= --}}
-            <div class="lg:col-span-4 space-y-4">
-
-                {{-- ===== WRAPPER 1: DETAIL PRODUK ===== --}}
-                <div class="border rounded-lg bg-white p-4 space-y-4">
-
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <p class="text-2xl font-bold">
-                                Rp {{ number_format($product['price'], 0, ',', '.') }}
-                            </p>
-
-                            <h1 class="text-lg font-semibold leading-snug">
-                                {{ $product['name'] }}
-                            </h1>
-
-                            <p class="text-sm text-gray-500">
-{{ $product['location'] ?? 'Lokasi penjual' }}
-                            </p>
-                        </div>
-
-                        <div class="flex gap-2 pt-1">
-                            <button class="w-8 h-8 border rounded-full hover:bg-gray-100">🔗</button>
-                            <button class="w-8 h-8 border rounded-full hover:bg-gray-100">❤️</button>
+            <div class="lg:col-span-4 space-y-6">
+                {{-- INFO HARGA --}}
+                <div class="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-sm space-y-6">
+                    <div>
+                        <p class="text-4xl font-black tracking-tight text-slate-800 mb-1">
+                            <span class="text-lg font-bold">Rp</span>{{ number_format($product['price'], 0, ',', '.') }}
+                        </p>
+                        <h1 class="text-lg font-bold text-slate-600 leading-tight mb-3">{{ $product['name'] }}</h1>
+                        <div class="flex items-center gap-2 text-slate-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <span class="text-xs font-bold uppercase tracking-wide">{{ $product['location'] ?? 'Bandung, Jawa Barat' }}</span>
                         </div>
                     </div>
 
-                    <hr>
-
-<a
-    href="{{ route('buyer.checkout', $product['id']) }}"
-    class="block w-full text-center bg-blue-600 text-white py-3 rounded font-semibold
-    hover:bg-blue-700 transition">
-    BELI
-</a>
-
-
-                </div>
-
-                {{-- ===== WRAPPER 2: USER / PENJUAL ===== --}}
-                <div class="border rounded-lg bg-white p-4 space-y-4">
-
-                    <div class="flex items-center gap-3">
-                        <a href="/user/{{ $product['user']['id'] }}">
-                            <img src="{{ $product['user']['avatar'] }}"
-                                class="w-12 h-12 rounded-full object-cover bg-gray-100">
+                    <div class="flex gap-3">
+                        <a href="{{ route('buyer.checkout', $product['id']) }}" class="flex-1 bg-luno-primary text-white py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] text-center hover:bg-luno-primary-dark shadow-xl shadow-blue-100 transition-all active:scale-95">
+                            Beli Sekarang
                         </a>
-
-                        <div class="flex-1">
-                            <a href="{{ route('public.profile', $product['user']['id']) }}"
-                                class="font-semibold hover:underline">
-                                {{ $product['user']['name'] }}
-                            </a>
-                            <p class="text-xs text-gray-500">Penjual</p>
-                        </div>
+                        <button class="w-14 h-14 border border-slate-100 rounded-2xl flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all active:scale-90">❤️</button>
                     </div>
-
-                    <button
-                        class="w-full bg-blue-600 text-white py-2 rounded font-semibold
-                        hover:bg-blue-700 transition"
-                        data-open-chat="true" data-user-id="{{ $product['user']['id'] }}">
-                        Chat Penjual
-                    </button>
-                    {{-- LIHAT BARANG SELLER --}}
-                    <a href="{{ route('public.profile.products', $product['user']['id']) }}"
-                        class="block w-full text-center border py-2 rounded text-sm
-    hover:bg-gray-50 transition">
-                        Lihat Barang Lain
-                    </a>
-
-
-
                 </div>
 
-{{-- ================= MAP AREA ================= --}}
-<div class="border rounded-lg bg-white p-2">
-    <div
-        id="map"
-        class="w-full h-[260px] rounded flex items-center justify-center text-sm text-gray-500 bg-gray-50"
-        data-lat="{{ $product['user']['latitude'] ?? '' }}"
-        data-lng="{{ $product['user']['longitude'] ?? '' }}"
-    ></div>
+                {{-- INFO PENJUAL --}}
+                <div class="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-sm space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div class="relative">
+                            <img src="{{ $product['user']['avatar'] }}" class="w-16 h-16 rounded-[1.25rem] object-cover bg-slate-50 border border-slate-100">
+                            <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-4 border-white rounded-full shadow-sm"></div>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-base font-black text-slate-800">{{ $product['user']['name'] }}</p>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Penjual Terpercaya</p>
+                        </div>
+                    </div>
+<div class="grid grid-cols-2 gap-3">
+    {{-- Chat Penjual: Pastikan atribut data- tetap ada untuk JS Chat kamu --}}
+    <button class="bg-slate-50 text-slate-800 py-3 rounded-2xl font-bold text-xs hover:bg-slate-100 transition"
+            data-open-chat="true" 
+            data-user-id="{{ $product['user']['id'] }}">
+        Chat Penjual
+    </button>
+
+    {{-- Produk Lain: Harus menggunakan tag <a> agar href berfungsi --}}
+    <a href="{{ route('public.profile.products', $product['user']['id']) }}"
+       class="border border-slate-100 text-slate-500 py-3 rounded-2xl font-bold text-xs text-center hover:bg-slate-50 transition block">
+        Produk Lain
+    </a>
 </div>
+                </div>
 
-
-
-
+                {{-- MAP (FIXED Z-INDEX) --}}
+                <div class="bg-white border border-slate-100 rounded-[2.5rem] p-4 shadow-sm overflow-hidden">
+                    <div id="map" class="w-full h-[200px] rounded-[1.75rem] bg-slate-50" 
+                        data-lat="{{ $product['user']['latitude'] ?? '' }}" 
+                        data-lng="{{ $product['user']['longitude'] ?? '' }}">
+                    </div>
+                </div>
             </div>
-
         </div>
 
-        {{-- ================= ULASAN PENJUAL ================= --}}
-        <div class="mt-8 border rounded-lg bg-white p-4">
-
-            {{-- HEADER --}}
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="font-semibold">
-                    Ulasan Penjual
-                </h2>
-
-                <a href="#" class="text-sm text-blue-600 hover:underline">
-                    Lihat Ulasan Lain
-                </a>
-            </div>
-
-            {{-- LIST ULASAN (HORIZONTAL) --}}
-            <div class="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-
+        {{-- ULASAN --}}
+        <div class="mt-12 bg-white border border-slate-100 rounded-[2.5rem] p-10 shadow-sm">
+            <h2 class="text-2xl font-black text-slate-800 tracking-tight mb-8">Ulasan <span class="text-luno-primary">Penjual</span></h2>
+            <div class="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
                 @foreach ($ratings as $rating)
-                    <div class="min-w-[260px] border rounded-lg p-3 flex-shrink-0">
-
-                        {{-- HEADER --}}
-                        <div class="flex items-center justify-between mb-1">
-                            <p class="text-sm font-medium">
-                                {{ $rating['initial'] }}
-                            </p>
-
-                            {{-- BINTANG (LEBIH BESAR) --}}
-                            <div class="flex text-yellow-400 text-lg leading-none">
+                    <div class="min-w-[320px] bg-slate-50/50 border border-slate-100 rounded-3xl p-6 flex-shrink-0">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-white px-3 py-1 rounded-full border border-slate-100">{{ $rating['initial'] }}</span>
+                            <div class="flex text-amber-400 text-sm">
                                 @for ($i = 1; $i <= 5; $i++)
-                                    @if ($rating['star'] >= $i)
-                                        ★
-                                    @elseif ($rating['star'] >= $i - 0.5)
-                                        ☆
-                                    @else
-                                        <span class="text-gray-300">★</span>
-                                    @endif
+                                    <span>{{ $rating['star'] >= $i ? '★' : '☆' }}</span>
                                 @endfor
                             </div>
                         </div>
-
-                        {{-- PRODUK --}}
-                        <p class="text-xs text-gray-500 mb-1">
-                            {{ $rating['product'] }}
-                        </p>
-
-                        {{-- KOMENTAR --}}
-                        <p class="text-sm text-gray-700 leading-snug line-clamp-3">
-                            {{ $rating['comment'] }}
-                        </p>
-
+                        <p class="text-xs font-bold text-luno-primary mb-2">Produk: {{ $rating['product'] }}</p>
+                        <p class="text-sm text-slate-600 italic line-clamp-3">"{{ $rating['comment'] }}"</p>
                     </div>
                 @endforeach
-
             </div>
         </div>
-
     </div>
 @endsection
