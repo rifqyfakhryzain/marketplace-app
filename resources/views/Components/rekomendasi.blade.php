@@ -34,7 +34,7 @@
                 <h3 class="text-slate-800 font-bold">Belum Ada Rekomendasi</h3>
                 <p class="text-slate-400 text-xs mt-1">Coba cari barang impianmu untuk melihat hasil kurasi di sini.</p>
                 <a href="{{ route('home') }}" class="mt-6 px-6 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-xl hover:bg-slate-50 transition">
-                    Mulai Jelaj
+                    Mulai Jela
                 </a>
             </div>
         @endforelse
